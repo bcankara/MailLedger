@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mail Tarihçe Günlüğü — Seçenekler</title>
+  <link rel="stylesheet" href="options.css" />
+</head>
+<body>
+  <div class="options-shell">
+    <header class="options-header">
+      <div class="options-brand">
+        <img src="../icons/icon.svg" alt="" width="28" height="28" />
+        <div>
+          <h1>Mail Tarihçe Günlüğü Ayarları</h1>
+          <p>İzleme davranışını, kayıt limitini ve arayüz temasını özelleştirin.</p>
+        </div>
+      </div>
+      <button id="opt-open-dashboard" type="button" class="btn btn-primary">
+        Tam Arayüzü Aç
+      </button>
+    </header>
+
+    <form id="options-form" class="options-card">
+      <label class="toggle-row">
+        <div>
+          <strong>Yeni gelen mailleri otomatik kaydet</strong>
+          <span>Gelen tüm klasörlerde yeni maillerin adını ve geliş tarihini kaydeder.</span>
+        </div>
+        <input id="opt-track-incoming" type="checkbox" />
+      </label>
+
+      <label class="toggle-row">
+        <div>
+          <strong>Çöp Kutusu'na silinen mailleri kaydet</strong>
+          <span>Eski veya yeni bir mail Çöp Kutusu'na taşındığında silinme tarihini işler.</span>
+        </div>
+        <input id="opt-track-trash" type="checkbox" />
+      </label>
+
+      <label class="toggle-row">
+        <div>
+          <strong>Kalıcı silinen mailleri kaydet</strong>
+          <span>Çöp Kutusu boşaltıldığında veya Shift+Delete yapıldığında kalıcı silinme tarihini kaydeder.</span>
+        </div>
+        <input id="opt-track-permanent" type="checkbox" />
+      </label>
+
+      <label class="toggle-row">
+        <div>
+          <strong>Araç çubuğu rozet sayacını göster</strong>
+          <span>Eklenti simgesinde Çöp Kutusu'ndaki kayıt sayısını gösterir.</span>
+        </div>
+        <input id="opt-show-badge" type="checkbox" />
+      </label>
+
+      <div class="field-row">
+        <label for="opt-max-records">
+          <strong>Maksimum kayıt limiti</strong>
+          <span>Limit dolduğunda en eski aktif mailler önce temizlenir; silinen kayıtlar korunur.</span>
+        </label>
+        <select id="opt-max-records">
+          <option value="5000">5.000 kayıt</option>
+          <option value="10000">10.000 kayıt</option>
+          <option value="25000">25.000 kayıt (Varsayılan)</option>
+          <option value="50000">50.000 kayıt</option>
+          <option value="100000">100.000 kayıt</option>
+        </select>
+      </div>
+
+      <div class="field-row">
+        <label for="opt-theme">
+          <strong>Arayüz teması</strong>
+          <span>Popup ve tam panelin görünümünü belirler.</span>
+        </label>
+        <select id="opt-theme">
+          <option value="system">Sistem Teması (Otomatik)</option>
+          <option value="light">Açık Tema</option>
+          <option value="dark">Koyu Tema</option>
+        </select>
+      </div>
+
+      <div class="options-footer">
+        <span id="opt-status" class="save-status" aria-live="polite"></span>
+        <button type="submit" class="btn btn-primary">Ayarları Kaydet</button>
+      </div>
+    </form>
+  </div>
+
+  <script src="../src/store.js"></script>
+  <script src="../src/mailActions.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>
