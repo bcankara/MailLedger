@@ -14,7 +14,7 @@
         <img src="../icons/icon.svg" alt="" width="22" height="22" />
         <div class="brand-text">
           <span class="brand-title" data-i18n="brandTitle">MailLedger</span>
-          <span class="brand-meta" data-i18n="brandMeta">v1.2.0 · Local</span>
+          <span class="brand-meta" data-i18n="brandMeta">v1.3.0 · Local</span>
         </div>
       </div>
 
@@ -59,6 +59,15 @@
             <circle cx="6.5" cy="11.5" r="1.4" fill="var(--chrome)" stroke="currentColor" stroke-width="1.35" />
           </svg>
           <span class="nav-label" data-i18n="navSettings">Settings</span>
+        </button>
+
+        <button type="button" class="nav-link" data-view="about">
+          <svg class="nav-icon" viewBox="0 0 16 16" width="15" height="15" aria-hidden="true">
+            <circle cx="8" cy="8" r="5.8" fill="none" stroke="currentColor" stroke-width="1.35" />
+            <path d="M8 7.4v3.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+            <circle cx="8" cy="5.1" r="0.85" fill="currentColor" />
+          </svg>
+          <span class="nav-label" data-i18n="navAbout">About</span>
         </button>
       </nav>
 
@@ -422,6 +431,81 @@
                 <button id="btn-clear-all" type="button" class="btn btn-danger btn-sm" data-i18n="btnClearAll">Reset Entire Ledger</button>
                 <button id="btn-clear-cancel" type="button" class="btn btn-ghost btn-sm" data-i18n="btnCancel">Cancel</button>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW: ABOUT -->
+      <section id="view-about" class="pane-body scroll-pane hidden">
+        <div class="content-container narrow">
+          <div class="section-block">
+            <div class="section-head">
+              <h2 data-i18n="aboutAppHeading">Application &amp; Privacy</h2>
+              <p data-i18n="aboutAppDesc">
+                MailLedger (v1.3.0) is an open-source, 100% local email audit ledger for Mozilla Thunderbird released under the MIT License. It records message subjects, senders, received dates, and exact deletion timestamps in Thunderbird's local storage without ever reading email bodies or making external network requests.
+              </p>
+            </div>
+            <div class="action-row">
+              <a
+                class="btn btn-subtle btn-sm"
+                href="https://github.com/bcankara/MailLedger"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n="aboutBtnRepo"
+              >GitHub Repository</a>
+              <a
+                class="btn btn-subtle btn-sm"
+                href="https://github.com/bcankara/MailLedger/issues"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n="aboutBtnIssues"
+              >Report an Issue</a>
+            </div>
+          </div>
+
+          <div class="section-block">
+            <div class="section-head">
+              <h2 data-i18n="aboutAuthorHeading">Developer</h2>
+            </div>
+            <div class="about-author-block">
+              <div class="about-author-name" data-i18n="aboutAuthorName">Burak Can KARA, Ph.D.</div>
+              <div class="about-meta-role" data-i18n="aboutAuthorRole">
+                Assistant Professor, Amasya University · Associate Editor, SoftwareX (Elsevier)
+              </div>
+              <p class="about-author-bio" data-i18n="aboutAuthorBio">
+                Geomatics engineer and open-source scientific software developer specializing in AI-augmented SAR/InSAR ground deformation monitoring, UAV photogrammetry, and research workflow tools (creator of BibexPy and LitOrganizer).
+              </p>
+            </div>
+            <div class="action-row">
+              <a
+                class="btn btn-subtle btn-sm"
+                href="https://bcankara.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n="aboutLinkWebsite"
+              >Website (bcankara.com)</a>
+              <a
+                class="btn btn-subtle btn-sm"
+                href="https://github.com/bcankara"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n="aboutLinkGithub"
+              >GitHub (@bcankara)</a>
+              <a
+                class="btn btn-subtle btn-sm"
+                href="https://orcid.org/0000-0002-6933-0759"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n="aboutLinkOrcid"
+              >ORCID (0000-0002-6933-0759)</a>
+              <a
+                class="btn btn-subtle btn-sm"
+                href="https://scholar.google.com/citations?user=5m67DOAAAAAJ"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n="aboutLinkScholar"
+              >Google Scholar</a>
             </div>
           </div>
         </div>

@@ -11,7 +11,7 @@
     trackIncoming: true,
     trackTrash: true,
     trackPermanentDelete: true,
-    showBadgeCount: true,
+    showBadgeCount: false,
     language: "auto", // "auto" | "en" | "tr"
     theme: "system" // "system" | "light" | "dark"
   };
@@ -409,17 +409,31 @@
   }
 
   /**
-   * Mark permanently deleted messages (Trash purge or Shift+Delete).
-   * Preserves prior Trash deletion timestamp when available.
+   * Handle messages reported via `messages.onDeleted`.
+   *
+   * Important Gmail/IMAP behavior in Thunderbird:
+   * When a user deletes a message from INBOX (or another normal folder) in a Gmail IMAP
+   * account, Thunderbird often expunges the message from INBOX / All Mail before the local
+   * `[Gmail]/Trash` folder index has synced the new UID, firing `messages.onDeleted` with
+   * the non-trash source folder instead of `messages.onMoved`.
+   *
+   * Therefore:
+   * - If `msg.folder` IS a Trash folder (`isTrashFolder(...) === true`), OR `ctx.forcePermanent === true`,
+   *   the message was genuinely purged from Trash -> mark `status = "deleted"`.
+   * - If `msg.folder` is a non-Trash folder, treat it as moved to Trash (`status = "trashed"`).
+   *
    * @param {Record<string, object>} recordsMap
    * @param {Array<object>} messages
-   * @param {{ now?: number, accountNames?: Record<string, string> }} ctx
+   * @param {{ now?: number, accountNames?: Record<string, string>, trashFolderIds?: Set<string>, trashFoldersByAccount?: Record<string, object>, forcePermanent?: boolean }} ctx
    * @returns {Record<string, object>}
    */
   function applyDeletedMessages(recordsMap, messages, ctx = {}) {
     const nextMap = { ...(recordsMap || {}) };
     const now = Number.isFinite(ctx.now) ? ctx.now : Date.now();
     const accountNames = ctx.accountNames || {};
+    const trashFolderIds = ctx.trashFolderIds;
+    const trashFoldersByAccount = ctx.trashFoldersByAccount || {};
+    const forcePermanent = Boolean(ctx.forcePermanent);
 
     for (const msg of messages || []) {
       if (!msg) {
@@ -429,6 +443,8 @@
       const existing = nextMap[key];
       const accountId = msg.folder?.accountId || existing?.accountId || msg.accountId || "unknown";
       const accountName = accountNames[accountId] || existing?.accountName || accountId;
+      const fromTrash = forcePermanent || isTrashFolder(msg.folder, trashFolderIds);
+
       const base = existing
         ? { ...existing }
         : buildBaseRecord(msg, {
@@ -437,19 +453,70 @@
             now
           });
 
+      base.accountId = accountId;
       base.accountName = accountName;
-      base.status = "deleted";
-      base.permanentlyDeletedAt = now;
-      base.deletedAt = base.deletedAt ?? now;
       base.preExistingTrash = false;
-      base.currentFolderId = null;
-      base.currentFolderPath = null;
-      base.lastMessageId = null;
+
+      if (fromTrash) {
+        base.status = "deleted";
+        base.verifiedPermanent = true;
+        base.permanentlyDeletedAt = now;
+        base.deletedAt = base.deletedAt ?? now;
+        base.currentFolderId = null;
+        base.currentFolderPath = null;
+        base.lastMessageId = null;
+      } else {
+        // Deleted from a normal folder (e.g. INBOX / All Mail in Gmail IMAP) -> sits in Trash
+        const knownTrash = trashFoldersByAccount[accountId] || null;
+        base.status = "trashed";
+        base.verifiedPermanent = false;
+        base.deletedAt = base.deletedAt ?? now;
+        base.permanentlyDeletedAt = null;
+        base.restoredAt = null;
+        base.originalFolderId = base.originalFolderId || msg.folder?.id || null;
+        base.originalFolderPath = base.originalFolderPath || formatFolderLabel(msg.folder) || null;
+        base.currentFolderId = knownTrash?.id || (existing?.status === "trashed" ? existing.currentFolderId : null);
+        base.currentFolderPath = formatFolderLabel(knownTrash) || (existing?.status === "trashed" ? existing.currentFolderPath : null);
+      }
 
       nextMap[key] = base;
     }
 
     return nextMap;
+  }
+
+  /**
+   * Self-heal records from earlier versions where normal Inbox deletions on Gmail IMAP
+   * were recorded with `status === "deleted"` and `permanentlyDeletedAt === deletedAt`.
+   * @param {Record<string, object>} recordsMap
+   * @returns {{ map: Record<string, object>, changed: boolean }}
+   */
+  function repairFalsePermanentDeletes(recordsMap) {
+    const map = recordsMap || {};
+    let changed = false;
+    const next = { ...map };
+    const trashNamePattern = /(?:^|\/)(?:trash|çöp|cop|deleted|silinen|bin)(?:$|\/)/i;
+
+    for (const [key, rec] of Object.entries(map)) {
+      if (!rec || rec.status !== "deleted" || rec.verifiedPermanent) {
+        continue;
+      }
+      if (
+        rec.deletedAt != null &&
+        rec.permanentlyDeletedAt === rec.deletedAt &&
+        rec.originalFolderPath &&
+        !trashNamePattern.test(rec.originalFolderPath)
+      ) {
+        next[key] = {
+          ...rec,
+          status: "trashed",
+          permanentlyDeletedAt: null
+        };
+        changed = true;
+      }
+    }
+
+    return { map: changed ? next : map, changed };
   }
 
   /**
@@ -790,12 +857,12 @@
 
       const status = validStatuses.has(raw.status) ? raw.status : "active";
       const clean = {
-        key: rawKey,
-        headerMessageId: typeof raw.headerMessageId === "string" ? raw.headerMessageId.trim() : "",
-        subject: typeof raw.subject === "string" && raw.subject.trim() ? raw.subject.trim() : "",
-        author: typeof raw.author === "string" ? raw.author : "",
-        accountId: typeof raw.accountId === "string" && raw.accountId ? raw.accountId : "unknown",
-        accountName: typeof raw.accountName === "string" && raw.accountName ? raw.accountName : (raw.accountId || "unknown"),
+        key: rawKey.slice(0, 600),
+        headerMessageId: typeof raw.headerMessageId === "string" ? raw.headerMessageId.trim().slice(0, 500) : "",
+        subject: typeof raw.subject === "string" && raw.subject.trim() ? raw.subject.trim().slice(0, 1000) : "",
+        author: typeof raw.author === "string" ? raw.author.slice(0, 500) : "",
+        accountId: typeof raw.accountId === "string" && raw.accountId ? raw.accountId.slice(0, 200) : "unknown",
+        accountName: typeof raw.accountName === "string" && raw.accountName ? raw.accountName.slice(0, 200) : String(raw.accountId || "unknown").slice(0, 200),
         receivedAt: normalizeTimestamp(raw.receivedAt),
         recordedAt: normalizeTimestamp(raw.recordedAt) ?? Date.now(),
         status,
@@ -803,10 +870,10 @@
         permanentlyDeletedAt: normalizeTimestamp(raw.permanentlyDeletedAt),
         restoredAt: normalizeTimestamp(raw.restoredAt),
         preExistingTrash: Boolean(raw.preExistingTrash),
-        originalFolderId: typeof raw.originalFolderId === "string" ? raw.originalFolderId : null,
-        originalFolderPath: typeof raw.originalFolderPath === "string" ? raw.originalFolderPath : null,
-        currentFolderId: typeof raw.currentFolderId === "string" ? raw.currentFolderId : null,
-        currentFolderPath: typeof raw.currentFolderPath === "string" ? raw.currentFolderPath : null,
+        originalFolderId: typeof raw.originalFolderId === "string" ? raw.originalFolderId.slice(0, 500) : null,
+        originalFolderPath: typeof raw.originalFolderPath === "string" ? raw.originalFolderPath.slice(0, 500) : null,
+        currentFolderId: typeof raw.currentFolderId === "string" ? raw.currentFolderId.slice(0, 500) : null,
+        currentFolderPath: typeof raw.currentFolderPath === "string" ? raw.currentFolderPath.slice(0, 500) : null,
         lastMessageId: typeof raw.lastMessageId === "number" ? raw.lastMessageId : null
       };
 
@@ -898,8 +965,17 @@
     });
   }
 
+  /**
+   * Escape a CSV cell according to RFC 4180 and neutralize spreadsheet formula injection
+   * triggers (=, +, -, @, Tab, CR) per OWASP CSV Injection guidelines.
+   * @param {unknown} value
+   * @returns {string}
+   */
   function escapeCsvCell(value) {
-    const str = value === null || value === undefined ? "" : String(value);
+    let str = value === null || value === undefined ? "" : String(value);
+    if (/^[=+\-@\t\r]/.test(str)) {
+      str = `'${str}`;
+    }
     if (/[",\r\n]/.test(str)) {
       return `"${str.replace(/"/g, '""')}"`;
     }
@@ -985,7 +1061,12 @@
     async function getRecordsMap() {
       const res = await storageArea.get(STORAGE_KEY);
       const raw = res?.[STORAGE_KEY];
-      return raw && typeof raw === "object" ? { ...raw } : {};
+      const baseMap = raw && typeof raw === "object" ? { ...raw } : {};
+      const repaired = repairFalsePermanentDeletes(baseMap);
+      if (repaired.changed) {
+        await storageArea.set({ [STORAGE_KEY]: repaired.map });
+      }
+      return repaired.map;
     }
 
     async function getRecordsList() {
@@ -1072,6 +1153,7 @@
     applyScannedTrashMessages,
     applyMovedMessages,
     applyDeletedMessages,
+    repairFalsePermanentDeletes,
     pruneRecords,
     filterAndSortRecords,
     computeStatistics,

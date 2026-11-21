@@ -236,11 +236,12 @@ describe("background event handler integration", () => {
     assert.equal(typeof mock._listeners.startup, "function");
   });
 
-  it("handles paginated incoming mails, deleting an old mail, restoring, permanent delete, and badge updates", async () => {
+  it("handles paginated incoming mails, deleting an old mail, Gmail-style onDeleted from INBOX, permanent purge from Trash, and badge toggle", async () => {
     const mock = createMockMessenger();
     globalThis.messenger = mock;
 
     const Store = require(STORE_PATH);
+    mock._storageBacking[Store.SETTINGS_KEY] = { showBadgeCount: true };
     require(BG_PATH);
     await new Promise((r) => setTimeout(r, 15));
 
@@ -306,7 +307,22 @@ describe("background event handler integration", () => {
 
     assert.equal(mock._badgeTexts.at(-1), "1");
 
-    // 3. Permanently delete <new-2@test>
+    // 3. Gmail IMAP expunge: onDeleted fires with folder = INBOX -> should become trashed
+    await mock._listeners.onDeleted({
+      id: null,
+      messages: [
+        {
+          id: 1,
+          headerMessageId: "<new-1@test>",
+          subject: "Birinci Mail",
+          author: "a@test.com",
+          date: "2026-11-21T07:59:00Z",
+          folder: mock._inboxFolder
+        }
+      ]
+    });
+
+    // 4. Permanently delete <new-2@test> from Trash -> should become deleted
     await mock._listeners.onDeleted({
       id: null,
       messages: [
@@ -316,12 +332,15 @@ describe("background event handler integration", () => {
           subject: "İkinci Mail",
           author: "b@test.com",
           date: "2026-11-21T08:00:00Z",
-          folder: mock._inboxFolder
+          folder: mock._trashFolder
         }
       ]
     });
 
     const saved = mock._storageBacking[Store.STORAGE_KEY];
+    assert.equal(saved["acc1::<new-1@test>"].status, "trashed");
+    assert.equal(saved["acc1::<new-1@test>"].permanentlyDeletedAt, null);
+    assert.equal(saved["acc1::<new-1@test>"].currentFolderId, mock._trashFolder.id);
     assert.equal(saved["acc1::<new-2@test>"].status, "deleted");
     assert.equal(saved["acc1::<old-2020@test>"].status, "trashed");
     assert.equal(saved["acc1::<old-2020@test>"].receivedAt, Date.parse(oldDate));

@@ -18,7 +18,8 @@
     all: "viewAllTitle",
     stats: "viewStatsTitle",
     tools: "viewToolsTitle",
-    settings: "viewSettingsTitle"
+    settings: "viewSettingsTitle",
+    about: "viewAboutTitle"
   };
 
   const storageManager = Store.createStorageManager(api.storage.local);
@@ -60,6 +61,7 @@
     viewStats: document.getElementById("view-stats"),
     viewTools: document.getElementById("view-tools"),
     viewSettings: document.getElementById("view-settings"),
+    viewAbout: document.getElementById("view-about"),
 
     kpiTotal: document.getElementById("kpi-total"),
     kpiTrashed: document.getElementById("kpi-trashed"),
@@ -237,6 +239,7 @@
     els.viewStats.classList.toggle("hidden", valid !== "stats");
     els.viewTools.classList.toggle("hidden", valid !== "tools");
     els.viewSettings.classList.toggle("hidden", valid !== "settings");
+    els.viewAbout?.classList.toggle("hidden", valid !== "about");
 
     if (valid === "deleted") {
       state.status = "deleted_any";
@@ -746,7 +749,7 @@
   function exportJson() {
     const payload = {
       exportedAt: new Date().toISOString(),
-      version: "1.2.0",
+      version: "1.3.0",
       records: state.allRecords
     };
     const stamp = new Date().toISOString().slice(0, 10);

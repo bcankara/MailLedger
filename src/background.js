@@ -133,12 +133,13 @@
   }
 
   /**
-   * Fetch current account display names and Trash folder IDs safely.
-   * @returns {Promise<{ accountNames: Record<string, string>, trashFolderIds: Set<string> }>}
+   * Fetch current account display names, Trash folder IDs, and primary Trash folder per account.
+   * @returns {Promise<{ accountNames: Record<string, string>, trashFolderIds: Set<string>, trashFoldersByAccount: Record<string, object> }>}
    */
   async function getAccountAndTrashContext() {
     const accountNames = {};
     const trashFolderIds = new Set();
+    const trashFoldersByAccount = {};
 
     try {
       const accounts = await api.accounts.list(false);
@@ -156,13 +157,16 @@
       for (const folder of trashFolders || []) {
         if (folder && folder.id) {
           trashFolderIds.add(folder.id);
+          if (folder.accountId && !trashFoldersByAccount[folder.accountId]) {
+            trashFoldersByAccount[folder.accountId] = folder;
+          }
         }
       }
     } catch (err) {
       console.error("[MailLedger] Failed to query trash folders:", err);
     }
 
-    return { accountNames, trashFolderIds };
+    return { accountNames, trashFolderIds, trashFoldersByAccount };
   }
 
   /**
@@ -260,7 +264,7 @@
   async function handleMessagesDeleted(messageList) {
     try {
       const settings = await storageManager.getSettings();
-      if (!settings.trackPermanentDelete) {
+      if (!settings.trackPermanentDelete && !settings.trackTrash) {
         return;
       }
 
@@ -268,11 +272,15 @@
         collectMessageList(messageList),
         getAccountAndTrashContext()
       ]);
-      if (messages.length === 0) {
+      const relevant = messages.filter((msg) => {
+        const fromTrash = Store.isTrashFolder(msg?.folder, ctx.trashFolderIds);
+        return fromTrash ? settings.trackPermanentDelete : settings.trackTrash;
+      });
+      if (relevant.length === 0) {
         return;
       }
       await storageManager.updateRecords((map) =>
-        Store.applyDeletedMessages(map, messages, {
+        Store.applyDeletedMessages(map, relevant, {
           ...ctx,
           now: Date.now()
         })

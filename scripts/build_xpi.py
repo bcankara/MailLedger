@@ -19,6 +19,7 @@ RUNTIME_FILES = [
     "_locales/en/messages.json",
     "_locales/tr/messages.json",
     "icons/icon.svg",
+    "icons/icon-128.png",
     "src/i18n.js",
     "src/store.js",
     "src/mailActions.js",

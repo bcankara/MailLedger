@@ -16,7 +16,7 @@
     "description": "Sol menü marka başlığı"
   },
   "brandMeta": {
-    "message": "v1.2.0 · Yerel",
+    "message": "v1.3.0 · Yerel",
     "description": "Sürüm ve yerel çalışma bilgisi"
   },
   "trackingActive": {
@@ -794,5 +794,61 @@
   "csvHeaderMessageId": {
     "message": "Message-ID",
     "description": "CSV sütun başlığı"
+  },
+  "navAbout": {
+    "message": "Hakkında",
+    "description": "Hakkında görünümü menü öğesi"
+  },
+  "viewAboutTitle": {
+    "message": "MailLedger Hakkında",
+    "description": "Hakkında görünümü başlığı"
+  },
+  "aboutAppHeading": {
+    "message": "Uygulama & Gizlilik",
+    "description": "Hakkında sayfası uygulama başlığı"
+  },
+  "aboutAppDesc": {
+    "message": "MailLedger (v1.3.0), Mozilla Thunderbird için MIT Lisansı altında yayınlanan açık kaynaklı ve %100 yerel çalışan bir e-posta kayıt defteridir. E-posta içeriklerini okumadan ve dış sunuculara hiçbir ağ isteği göndermeden konu, gönderen, geliş tarihi ve tam silinme zamanını yerel depoda tutar.",
+    "description": "Hakkında sayfası uygulama açıklaması"
+  },
+  "aboutBtnRepo": {
+    "message": "GitHub Deposu",
+    "description": "GitHub deposu bağlantısı"
+  },
+  "aboutBtnIssues": {
+    "message": "Hata / Öneri Bildir",
+    "description": "GitHub issues bağlantısı"
+  },
+  "aboutAuthorHeading": {
+    "message": "Geliştirici",
+    "description": "Hakkında sayfası geliştirici başlığı"
+  },
+  "aboutAuthorName": {
+    "message": "Dr. Öğr. Üyesi Burak Can KARA",
+    "description": "Geliştirici adı"
+  },
+  "aboutAuthorRole": {
+    "message": "Dr. Öğretim Üyesi, Amasya Üniversitesi · Yardımcı Editör, SoftwareX (Elsevier)",
+    "description": "Geliştirici kurum ve editörlük görevi"
+  },
+  "aboutAuthorBio": {
+    "message": "Yapay zekâ destekli SAR/InSAR yeryüzü deformasyon izleme, İHA fotogrametrisi ve açık kaynak bilimsel yazılım geliştirme alanlarında çalışan geomatik mühendisi ve araştırmacı (BibexPy ve LitOrganizer geliştiricisi).",
+    "description": "Geliştirici biyografisi"
+  },
+  "aboutLinkWebsite": {
+    "message": "Web Sitesi (bcankara.com)",
+    "description": "Geliştirici web sitesi bağlantısı"
+  },
+  "aboutLinkGithub": {
+    "message": "GitHub (@bcankara)",
+    "description": "Geliştirici GitHub bağlantısı"
+  },
+  "aboutLinkOrcid": {
+    "message": "ORCID (0000-0002-6933-0759)",
+    "description": "Geliştirici ORCID bağlantısı"
+  },
+  "aboutLinkScholar": {
+    "message": "Google Scholar",
+    "description": "Geliştirici Google Scholar bağlantısı"
   }
 }

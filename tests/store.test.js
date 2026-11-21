@@ -350,7 +350,32 @@ describe("applyMovedMessages", () => {
 });
 
 describe("applyDeletedMessages", () => {
-  it("preserves original deletedAt when purging an already-trashed mail", () => {
+  const trashFolder = {
+    id: "acc1://[Gmail]/Trash",
+    accountId: "acc1",
+    name: "Çöp Kutusu",
+    path: "/[Gmail]/Çöp Kutusu",
+    specialUse: ["trash"]
+  };
+  const ctx = {
+    accountNames: { acc1: "Gmail" },
+    trashFolderIds: new Set([trashFolder.id]),
+    trashFoldersByAccount: { acc1: trashFolder }
+  };
+
+  it("treats onDeleted from a non-Trash folder (Gmail IMAP expunge) as trashed instead of permanent delete", () => {
+    const inboxMsg = makeMsg({ id: 101, headerMessageId: "<gmail-del@test>" });
+    const next = Store.applyDeletedMessages({}, [inboxMsg], { ...ctx, now: 7777 });
+    const rec = next["acc1::<gmail-del@test>"];
+    assert.equal(rec.status, "trashed");
+    assert.equal(rec.deletedAt, 7777);
+    assert.equal(rec.permanentlyDeletedAt, null);
+    assert.equal(rec.originalFolderPath, "INBOX");
+    assert.equal(rec.currentFolderId, trashFolder.id);
+    assert.equal(rec.currentFolderPath, "[Gmail]/Çöp Kutusu");
+  });
+
+  it("preserves original deletedAt when purging a message from a Trash folder", () => {
     const existing = {
       "acc1::<msg-101@example.com>": {
         key: "acc1::<msg-101@example.com>",
@@ -368,15 +393,16 @@ describe("applyDeletedMessages", () => {
         preExistingTrash: false,
         originalFolderId: "acc1://INBOX",
         originalFolderPath: "INBOX",
-        currentFolderId: "acc1://Trash",
-        currentFolderPath: "Trash",
+        currentFolderId: trashFolder.id,
+        currentFolderPath: "[Gmail]/Çöp Kutusu",
         lastMessageId: 50
       }
     };
-    const next = Store.applyDeletedMessages(existing, [makeMsg()], {
-      now: 9000,
-      accountNames: { acc1: "Gmail" }
-    });
+    const next = Store.applyDeletedMessages(
+      existing,
+      [makeMsg({ folder: trashFolder })],
+      { ...ctx, now: 9000 }
+    );
     const rec = next["acc1::<msg-101@example.com>"];
     assert.equal(rec.status, "deleted");
     assert.equal(rec.deletedAt, 5000);
@@ -384,15 +410,52 @@ describe("applyDeletedMessages", () => {
     assert.equal(rec.currentFolderId, null);
   });
 
-  it("sets both deletedAt and permanentlyDeletedAt on direct permanent delete", () => {
-    const next = Store.applyDeletedMessages({}, [makeMsg()], {
-      now: 7777,
-      accountNames: { acc1: "Gmail" }
-    });
+  it("sets both deletedAt and permanentlyDeletedAt on Trash purge or forcePermanent delete", () => {
+    const next = Store.applyDeletedMessages(
+      {},
+      [makeMsg({ folder: trashFolder })],
+      { ...ctx, now: 8888 }
+    );
     const rec = next["acc1::<msg-101@example.com>"];
     assert.equal(rec.status, "deleted");
-    assert.equal(rec.deletedAt, 7777);
-    assert.equal(rec.permanentlyDeletedAt, 7777);
+    assert.equal(rec.deletedAt, 8888);
+    assert.equal(rec.permanentlyDeletedAt, 8888);
+  });
+
+  it("repairs false permanent-delete records caused by earlier Gmail IMAP expunges", async () => {
+    const area = makeMemoryStorageArea();
+    await area.set({
+      [Store.STORAGE_KEY]: {
+        "acc1::<false-perm>": {
+          key: "acc1::<false-perm>",
+          status: "deleted",
+          deletedAt: 5000,
+          permanentlyDeletedAt: 5000,
+          originalFolderPath: "INBOX"
+        },
+        "acc1::<real-perm>": {
+          key: "acc1::<real-perm>",
+          status: "deleted",
+          deletedAt: 4000,
+          permanentlyDeletedAt: 9000,
+          originalFolderPath: "INBOX"
+        },
+        "acc1::<trash-perm>": {
+          key: "acc1::<trash-perm>",
+          status: "deleted",
+          deletedAt: 6000,
+          permanentlyDeletedAt: 6000,
+          originalFolderPath: "[Gmail]/Trash"
+        }
+      }
+    });
+
+    const mgr = Store.createStorageManager(area);
+    const repaired = await mgr.getRecordsMap();
+    assert.equal(repaired["acc1::<false-perm>"].status, "trashed");
+    assert.equal(repaired["acc1::<false-perm>"].permanentlyDeletedAt, null);
+    assert.equal(repaired["acc1::<real-perm>"].status, "deleted");
+    assert.equal(repaired["acc1::<trash-perm>"].status, "deleted");
   });
 });
 
@@ -587,18 +650,18 @@ describe("importRecordsFromJson", () => {
 });
 
 describe("exportRecordsToCsv", () => {
-  it("prepends UTF-8 BOM, escapes RFC 4180 cells, and supports localized labels", () => {
+  it("prepends UTF-8 BOM, escapes RFC 4180 cells, neutralizes formula injection, and supports localized labels", () => {
     const row = [
       {
         status: "trashed",
         subject: 'Teklif, "Özel"\nRevize',
-        author: "Ali <ali@test.com>",
-        accountName: "Gmail",
+        author: "=cmd|'/C calc'!A0",
+        accountName: "@SUM(1,2)",
         receivedAt: Date.UTC(2026, 0, 15, 10, 0, 0),
         deletedAt: null,
         preExistingTrash: true,
         permanentlyDeletedAt: null,
-        originalFolderPath: "",
+        originalFolderPath: "+INBOX",
         currentFolderPath: "[Gmail]/Çöp Kutusu",
         headerMessageId: "<id@test>"
       }
@@ -607,6 +670,9 @@ describe("exportRecordsToCsv", () => {
     const csvEn = Store.exportRecordsToCsv(row);
     assert.equal(csvEn.startsWith("\uFEFF"), true);
     assert.ok(csvEn.includes('"Teklif, ""Özel""\nRevize"'));
+    assert.ok(csvEn.includes("'=cmd|'/C calc'!A0"));
+    assert.ok(csvEn.includes("'@SUM(1,2)"));
+    assert.ok(csvEn.includes("'+INBOX"));
     assert.ok(csvEn.includes("Before install"));
 
     const csvTr = Store.exportRecordsToCsv(row, {

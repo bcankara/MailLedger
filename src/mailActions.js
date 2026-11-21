@@ -39,6 +39,26 @@
         );
         return sameAccount || globalPage.messages[0];
       }
+
+      if (record.accountId && record.accountId !== "unknown" && api.folders?.query) {
+        try {
+          const trashFolders = await api.folders.query({
+            accountId: record.accountId,
+            specialUse: ["trash"]
+          });
+          if (trashFolders && trashFolders.length > 0) {
+            const trashPage = await api.messages.query({
+              folderId: trashFolders[0].id,
+              headerMessageId: record.headerMessageId
+            });
+            if (trashPage?.messages?.length > 0) {
+              return trashPage.messages[0];
+            }
+          }
+        } catch (_err) {
+          // Ignore fallback query failures.
+        }
+      }
     }
 
     if (typeof record.lastMessageId === "number") {

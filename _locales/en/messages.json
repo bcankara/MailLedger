@@ -16,7 +16,7 @@
     "description": "Sidebar brand title"
   },
   "brandMeta": {
-    "message": "v1.2.0 · Local",
+    "message": "v1.3.0 · Local",
     "description": "Version and local-only badge"
   },
   "trackingActive": {
@@ -794,5 +794,61 @@
   "csvHeaderMessageId": {
     "message": "Message-ID",
     "description": "CSV column header"
+  },
+  "navAbout": {
+    "message": "About",
+    "description": "Sidebar navigation item for about page"
+  },
+  "viewAboutTitle": {
+    "message": "About MailLedger",
+    "description": "Heading for about view"
+  },
+  "aboutAppHeading": {
+    "message": "Application & Privacy",
+    "description": "About page application section heading"
+  },
+  "aboutAppDesc": {
+    "message": "MailLedger (v1.3.0) is an open-source, 100% local email audit ledger for Mozilla Thunderbird released under the MIT License. It records message subjects, senders, received dates, and exact deletion timestamps in Thunderbird's local storage without ever reading email bodies or making external network requests.",
+    "description": "About page application description"
+  },
+  "aboutBtnRepo": {
+    "message": "GitHub Repository",
+    "description": "GitHub repository link button"
+  },
+  "aboutBtnIssues": {
+    "message": "Report an Issue",
+    "description": "GitHub issues link button"
+  },
+  "aboutAuthorHeading": {
+    "message": "Developer",
+    "description": "About page developer section heading"
+  },
+  "aboutAuthorName": {
+    "message": "Burak Can KARA, Ph.D.",
+    "description": "Developer display name"
+  },
+  "aboutAuthorRole": {
+    "message": "Assistant Professor, Amasya University · Associate Editor, SoftwareX (Elsevier)",
+    "description": "Developer affiliation and editorial role"
+  },
+  "aboutAuthorBio": {
+    "message": "Geomatics engineer and open-source scientific software developer specializing in AI-augmented SAR/InSAR ground deformation monitoring, UAV photogrammetry, and research workflow tools (creator of BibexPy and LitOrganizer).",
+    "description": "Developer biography"
+  },
+  "aboutLinkWebsite": {
+    "message": "Website (bcankara.com)",
+    "description": "Developer website link"
+  },
+  "aboutLinkGithub": {
+    "message": "GitHub (@bcankara)",
+    "description": "Developer GitHub profile link"
+  },
+  "aboutLinkOrcid": {
+    "message": "ORCID (0000-0002-6933-0759)",
+    "description": "Developer ORCID link"
+  },
+  "aboutLinkScholar": {
+    "message": "Google Scholar",
+    "description": "Developer Google Scholar link"
   }
 }
