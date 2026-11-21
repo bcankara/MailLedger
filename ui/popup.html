@@ -1,69 +1,57 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mail Tarihçe Günlüğü</title>
+  <title data-i18n="extensionName">MailLedger</title>
   <link rel="stylesheet" href="popup.css" />
 </head>
 <body>
-  <div class="popup-shell">
-    <header class="popup-header">
-      <div class="popup-brand">
-        <img src="../icons/icon.svg" alt="" width="24" height="24" />
-        <div>
-          <h1>Mail Tarihçe Günlüğü</h1>
-          <span class="popup-subtitle">Son silinen mailler</span>
-        </div>
+  <div class="popover">
+    <header class="popover-header">
+      <div class="brand-lockup">
+        <img src="../icons/icon.svg" alt="" width="20" height="20" />
+        <span class="brand-name" data-i18n="extensionName">MailLedger</span>
       </div>
-      <button id="btn-open-full-top" type="button" class="btn btn-primary btn-xs">
-        Tam Panel
-      </button>
+      <span id="popup-metrics" class="metric-line">0 trash · 0 today · 0 total</span>
     </header>
 
-    <section class="mini-stats" aria-label="Özet">
-      <div class="mini-stat stat-amber">
-        <span class="mini-stat-label">Çöp Kutusu</span>
-        <strong id="stat-trashed" class="mini-stat-val">0</strong>
-      </div>
-      <div class="mini-stat stat-red">
-        <span class="mini-stat-label">Bugün Silinen</span>
-        <strong id="stat-today" class="mini-stat-val">0</strong>
-      </div>
-      <div class="mini-stat">
-        <span class="mini-stat-label">Toplam Kayıt</span>
-        <strong id="stat-total" class="mini-stat-val">0</strong>
-      </div>
-    </section>
-
-    <div class="popup-search-wrap">
+    <div class="search-strip">
+      <svg class="search-icon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+        <circle cx="7" cy="7" r="4.8" fill="none" stroke="currentColor" stroke-width="1.5" />
+        <path d="M10.7 10.7L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+      </svg>
       <input
         id="popup-search"
         type="search"
-        placeholder="Silinen maillerde hızlı ara..."
+        data-i18n-placeholder="popupSearchPlaceholder"
+        placeholder="Filter deleted messages..."
         autocomplete="off"
       />
     </div>
 
-    <div id="popup-status-msg" class="popup-status hidden" role="status"></div>
+    <div id="popup-status-msg" class="status-banner hidden" role="status"></div>
 
-    <main class="popup-list-wrap">
-      <ul id="popup-list" class="popup-list"></ul>
-      <div id="popup-empty" class="popup-empty hidden">
-        <p id="popup-empty-text">Henüz silinen mail kaydı yok.</p>
+    <main class="list-viewport">
+      <ul id="popup-list" class="mail-list"></ul>
+      <div id="popup-empty" class="empty-block hidden">
+        <p id="popup-empty-text" data-i18n="popupEmptyDefault">
+          No deleted mail recorded yet. Deleted messages appear here immediately sorted by deletion time.
+        </p>
       </div>
     </main>
 
-    <footer class="popup-footer">
-      <button id="btn-open-dashboard" type="button" class="btn btn-primary btn-sm">
-        Tam Arayüzü Aç
+    <footer class="popover-footer">
+      <button id="btn-open-dashboard" type="button" class="btn btn-primary" data-i18n="btnOpenFullDashboard">
+        Open MailLedger
       </button>
-      <button id="btn-open-settings" type="button" class="btn btn-secondary btn-sm">
-        Ayarlar
+      <button id="btn-open-settings" type="button" class="btn btn-ghost" data-i18n="navSettings">
+        Settings
       </button>
     </footer>
   </div>
 
+  <script src="../src/i18n.js"></script>
   <script src="../src/store.js"></script>
   <script src="../src/mailActions.js"></script>
   <script src="popup.js"></script>

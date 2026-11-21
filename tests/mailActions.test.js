@@ -185,7 +185,7 @@ describe("MailAuditActions", () => {
       accountId: "acc1"
     });
     assert.equal(missRes.ok, false);
-    assert.ok(missRes.error.includes("bulunamadı"));
+    assert.equal(missRes.errorCode, "NOT_FOUND");
   });
 
   it("restores trashed message to original folder, falling back to account Inbox if deleted", async () => {

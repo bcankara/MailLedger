@@ -2,40 +2,27 @@
   "use strict";
 
   const api = globalThis.messenger || globalThis.browser;
+  const I18n = globalThis.MailAuditI18n;
   const Store = globalThis.MailAuditStore;
   const Actions = globalThis.MailAuditActions;
 
-  if (!api || !Store || !Actions) {
+  if (!api || !I18n || !Store || !Actions) {
     return;
   }
 
   const PAGE_SIZE = 50;
   const PENDING_VIEW_KEY = "mailAuditPendingView";
 
-  const VIEW_META = {
-    deleted: {
-      title: "Silinen Mailler",
-      subtitle: "Çöp Kutusu'na atılan veya kalıcı silinen mailleri silinme tarihine göre sıralayın, arayın ve geri yükleyin."
-    },
-    all: {
-      title: "Tüm Mail Günlüğü",
-      subtitle: "Gelen aktif mailler ile silinen tüm maillerin geliş ve silinme tarihlerini tek listede inceleyin."
-    },
-    stats: {
-      title: "İstatistikler & Dağılım",
-      subtitle: "Son 14 gündeki silme yoğunluğunu, hesap bazlı özetleri ve en çok silme yapılan klasörleri görün."
-    },
-    tools: {
-      title: "Tarama & Yedekleme",
-      subtitle: "Mevcut Gelen/Çöp Kutusu maillerini tarayın, CSV/JSON yedeği alın veya yedekten geri yükleyin."
-    },
-    settings: {
-      title: "Ayarlar",
-      subtitle: "Otomatik izleme tercihlerini, saklama limitini, rozet sayacını ve tema görünümünü yapılandırın."
-    }
+  const VIEW_TITLE_KEYS = {
+    deleted: "viewDeletedTitle",
+    all: "viewAllTitle",
+    stats: "viewStatsTitle",
+    tools: "viewToolsTitle",
+    settings: "viewSettingsTitle"
   };
 
   const storageManager = Store.createStorageManager(api.storage.local);
+  const i18n = I18n.createI18n(api);
 
   const state = {
     view: "deleted",
@@ -65,7 +52,7 @@
     btnQuickScan: document.getElementById("btn-quick-scan"),
     btnThemeCycle: document.getElementById("btn-theme-cycle"),
     viewTitle: document.getElementById("view-title"),
-    viewSubtitle: document.getElementById("view-subtitle"),
+    inlineMetrics: document.getElementById("inline-metrics"),
     logHeaderActions: document.getElementById("log-header-actions"),
     scanStatusBar: document.getElementById("scan-status-bar"),
 
@@ -77,7 +64,6 @@
     kpiTotal: document.getElementById("kpi-total"),
     kpiTrashed: document.getElementById("kpi-trashed"),
     kpiDeleted: document.getElementById("kpi-deleted"),
-    kpiActive: document.getElementById("kpi-active"),
     kpiToday: document.getElementById("kpi-today"),
 
     statusPills: document.getElementById("status-pills"),
@@ -123,6 +109,7 @@
     setTrackTrash: document.getElementById("set-track-trash"),
     setTrackPermanent: document.getElementById("set-track-permanent"),
     setShowBadge: document.getElementById("set-show-badge"),
+    setLanguage: document.getElementById("set-language"),
     setMaxRecords: document.getElementById("set-max-records"),
     setTheme: document.getElementById("set-theme"),
 
@@ -132,9 +119,10 @@
     btnClearAll: document.getElementById("btn-clear-all"),
     btnClearCancel: document.getElementById("btn-clear-cancel"),
 
-    drawerBackdrop: document.getElementById("drawer-backdrop"),
     detailDrawer: document.getElementById("detail-drawer"),
+    splitWorkspace: document.querySelector(".split-workspace"),
     drawerSubject: document.getElementById("drawer-subject"),
+    drawerStatusLine: document.getElementById("drawer-status-line"),
     drawerBody: document.getElementById("drawer-body"),
     drawerFooter: document.getElementById("drawer-footer"),
     btnDrawerClose: document.getElementById("btn-drawer-close"),
@@ -147,7 +135,14 @@
     toast.className = `toast toast-${variant}`;
     toast.textContent = message;
     els.toastContainer.appendChild(toast);
-    setTimeout(() => toast.remove(), 4200);
+    setTimeout(() => toast.remove(), 3800);
+  }
+
+  function localizeActionError(res) {
+    if (res.errorCode === "NOT_FOUND") return i18n.t("errMsgNotFound");
+    if (res.errorCode === "TRASH_NOT_FOUND") return i18n.t("errTrashMsgNotFound");
+    if (res.errorCode === "NO_INBOX") return i18n.t("errNoInboxFound");
+    return res.error || i18n.t("toastRestoreFailed");
   }
 
   function createEl(tag, className, text) {
@@ -157,29 +152,33 @@
     return node;
   }
 
-  function themeLabel(theme) {
-    if (theme === "dark") return "Tema: Koyu";
-    if (theme === "light") return "Tema: Açık";
-    return "Tema: Sistem";
+  function themeButtonText(theme) {
+    if (theme === "dark") return i18n.t("themeBtnDark");
+    if (theme === "light") return i18n.t("themeBtnLight");
+    return i18n.t("themeBtnSystem");
+  }
+
+  function getStatusLabel(status) {
+    if (status === "trashed") return i18n.t("statusTrashed");
+    if (status === "deleted") return i18n.t("statusDeleted");
+    return i18n.t("statusActive");
+  }
+
+  function buildStatusNode(status) {
+    const wrap = createEl("span", "state-cell");
+    wrap.appendChild(createEl("span", `state-dot ${status || "active"}`));
+    wrap.appendChild(document.createTextNode(getStatusLabel(status)));
+    return wrap;
   }
 
   function formatDeletedDateDisplay(rec) {
     if (rec.deletedAt != null) {
-      return Store.formatDateTR(rec.deletedAt);
+      return Store.formatDateShort(rec.deletedAt, i18n.getLocale());
     }
     if (rec.preExistingTrash) {
-      return "Kurulum öncesi";
+      return i18n.t("preExistingTrash");
     }
     return "—";
-  }
-
-  function buildStatusBadge(status) {
-    const label = Store.formatStatusTR(status);
-    let cls = "badge ";
-    if (status === "trashed") cls += "badge-trashed";
-    else if (status === "deleted") cls += "badge-deleted";
-    else cls += "badge-active";
-    return createEl("span", cls, label);
   }
 
   function buildFolderDisplay(rec) {
@@ -187,31 +186,33 @@
       if (rec.originalFolderPath && rec.currentFolderPath) {
         return `${rec.originalFolderPath} → ${rec.currentFolderPath}`;
       }
-      return rec.currentFolderPath || rec.originalFolderPath || "Çöp Kutusu";
+      return rec.currentFolderPath || rec.originalFolderPath || i18n.t("folderTrashFallback");
     }
     if (rec.status === "deleted") {
-      return rec.originalFolderPath ? `Eski yer: ${rec.originalFolderPath}` : "Sunucudan/diskten silindi";
+      return rec.originalFolderPath
+        ? i18n.t("folderFormerPrefix", rec.originalFolderPath)
+        : i18n.t("folderRemovedFromServer");
     }
     return rec.currentFolderPath || rec.originalFolderPath || "—";
   }
 
   function syncStatusPillsUI() {
-    for (const pill of els.statusPills.querySelectorAll(".pill")) {
+    for (const pill of els.statusPills.querySelectorAll(".seg-btn")) {
       pill.classList.toggle("active", pill.dataset.status === state.status);
     }
   }
 
   function syncSortHeadersUI() {
-    const labels = {
-      status: "Durum",
-      subject: "Mail Adı (Konu) / Gönderen",
-      receivedAt: "Geliş Tarihi",
-      deletedAt: "Silinme Tarihi"
+    const keyMap = {
+      status: "colStatus",
+      subject: "colSubjectAuthor",
+      receivedAt: "colReceivedDate",
+      deletedAt: "colDeletedDate"
     };
-    for (const btn of document.querySelectorAll(".th-sort-btn")) {
+    for (const btn of document.querySelectorAll(".th-sort")) {
       const col = btn.dataset.sort;
-      const arrow = state.sortBy === col ? (state.sortDir === "asc" ? " ▲" : " ▼") : "";
-      btn.textContent = `${labels[col] || col}${arrow}`;
+      const arrow = state.sortBy === col ? (state.sortDir === "asc" ? " ↑" : " ↓") : "";
+      btn.textContent = `${i18n.t(keyMap[col] || col)}${arrow}`;
     }
     const combo = `${state.sortBy}:${state.sortDir}`;
     if (Array.from(els.sortSelect.options).some((o) => o.value === combo)) {
@@ -220,18 +221,18 @@
   }
 
   function switchView(targetView) {
-    const valid = VIEW_META[targetView] ? targetView : "deleted";
+    const valid = VIEW_TITLE_KEYS[targetView] ? targetView : "deleted";
     state.view = valid;
 
-    for (const btn of els.sideNav.querySelectorAll(".nav-item")) {
+    for (const btn of els.sideNav.querySelectorAll(".nav-link")) {
       btn.classList.toggle("active", btn.dataset.view === valid);
     }
 
-    els.viewTitle.textContent = VIEW_META[valid].title;
-    els.viewSubtitle.textContent = VIEW_META[valid].subtitle;
+    els.viewTitle.textContent = i18n.t(VIEW_TITLE_KEYS[valid]);
 
     const isLogView = valid === "deleted" || valid === "all";
     els.logHeaderActions.classList.toggle("hidden", !isLogView);
+    els.inlineMetrics.classList.toggle("hidden", !isLogView);
     els.viewLog.classList.toggle("hidden", !isLogView);
     els.viewStats.classList.toggle("hidden", valid !== "stats");
     els.viewTools.classList.toggle("hidden", valid !== "tools");
@@ -246,6 +247,8 @@
       renderTable();
     } else if (valid === "all") {
       state.status = "all";
+      state.sortBy = "activity";
+      state.sortDir = "desc";
       state.page = 1;
       syncStatusPillsUI();
       renderTable();
@@ -259,15 +262,14 @@
   function updateTrackingIndicator() {
     const anyOn = state.settings.trackIncoming || state.settings.trackTrash || state.settings.trackPermanentDelete;
     els.trackingDot.classList.toggle("paused", !anyOn);
-    els.trackingText.textContent = anyOn ? "Otomatik izleme aktif" : "İzleme duraklatıldı";
-    els.btnThemeCycle.textContent = themeLabel(state.settings.theme);
+    els.trackingText.textContent = anyOn ? i18n.t("trackingActive") : i18n.t("trackingPaused");
+    els.btnThemeCycle.textContent = themeButtonText(state.settings.theme);
   }
 
-  function updateKpisAndNav(stats) {
+  function updateMetricsAndNav(stats) {
     els.kpiTotal.textContent = String(stats.total);
     els.kpiTrashed.textContent = String(stats.trashed);
     els.kpiDeleted.textContent = String(stats.deleted);
-    els.kpiActive.textContent = String(stats.active);
     els.kpiToday.textContent = String(stats.deletedToday);
 
     els.navCountDeleted.textContent = String(stats.deletedAny);
@@ -277,6 +279,7 @@
   function updateAccountFilterOptions(records) {
     const previous = state.accountId;
     const accountsMap = new Map();
+    const locale = i18n.getLocale();
 
     for (const rec of records) {
       if (rec.accountId && !accountsMap.has(rec.accountId)) {
@@ -287,11 +290,11 @@
     els.accountFilter.textContent = "";
     const allOpt = document.createElement("option");
     allOpt.value = "all";
-    allOpt.textContent = "Tüm Hesaplar";
+    allOpt.textContent = i18n.t("allAccounts");
     els.accountFilter.appendChild(allOpt);
 
     const sortedEntries = Array.from(accountsMap.entries()).sort((a, b) =>
-      a[1].localeCompare(b[1], "tr-TR", { sensitivity: "base" })
+      a[1].localeCompare(b[1], locale, { sensitivity: "base" })
     );
     for (const [id, name] of sortedEntries) {
       const opt = document.createElement("option");
@@ -311,7 +314,7 @@
   function updateBulkBar(pageItems) {
     const count = state.selectedKeys.size;
     els.bulkBar.classList.toggle("hidden", count === 0);
-    els.bulkSelectedText.textContent = `${count} kayıt seçildi`;
+    els.bulkSelectedText.textContent = i18n.t("bulkSelectedCount", count);
 
     const hasTrashedSelected = state.allRecords.some(
       (r) => state.selectedKeys.has(r.key) && r.status === "trashed"
@@ -324,6 +327,7 @@
 
   function renderTable() {
     syncSortHeadersUI();
+    const locale = i18n.getLocale();
 
     state.filteredRecords = Store.filterAndSortRecords(state.allRecords, {
       search: state.search,
@@ -333,7 +337,8 @@
       dateFrom: state.dateFrom,
       dateTo: state.dateTo,
       sortBy: state.sortBy,
-      sortDir: state.sortDir
+      sortDir: state.sortDir,
+      locale
     });
 
     const total = state.filteredRecords.length;
@@ -349,28 +354,36 @@
     if (total === 0) {
       els.emptyState.classList.remove("hidden");
       els.emptyMessage.textContent = state.allRecords.length > 0
-        ? "Seçili filtre, arama veya tarih aralığına uyan kayıt bulunamadı."
-        : "Eklenti kurulduktan sonra gelen tüm mailler ve silinen tüm mailler (eski mailler dahil) otomatik olarak burada listelenir. Mevcut mailleri hemen içeri almak için sol menüden Tarama & Yedek bölümünü kullanabilirsiniz.";
-      els.paginationSummary.textContent = "0 kayıt";
+        ? i18n.t("emptyFiltered")
+        : i18n.t("emptyInitial");
+      els.paginationSummary.textContent = i18n.t("paginationZero");
     } else {
       els.emptyState.classList.add("hidden");
       const endIdx = Math.min(startIdx + pageItems.length, total);
-      els.paginationSummary.textContent = `${startIdx + 1}–${endIdx} / ${total} kayıt`;
+      els.paginationSummary.textContent = i18n.t("paginationRange", [startIdx + 1, endIdx, total]);
     }
 
-    els.paginationPage.textContent = `Sayfa ${state.page} / ${totalPages}`;
+    els.paginationPage.textContent = i18n.t("paginationPage", [state.page, totalPages]);
     els.btnPrevPage.disabled = state.page <= 1;
     els.btnNextPage.disabled = state.page >= totalPages;
 
     for (const rec of pageItems) {
       const tr = document.createElement("tr");
+      if (state.activeDrawerKey === rec.key) {
+        tr.classList.add("selected-row");
+      }
+
+      tr.addEventListener("click", (event) => {
+        if (event.target.closest("input, button")) return;
+        openDetailDrawer(rec);
+      });
 
       // Checkbox
-      const tdCheck = createEl("td", "check-col");
+      const tdCheck = createEl("td", "col-check");
       const cb = document.createElement("input");
       cb.type = "checkbox";
       cb.checked = state.selectedKeys.has(rec.key);
-      cb.setAttribute("aria-label", `Seç: ${rec.subject || "Mail"}`);
+      cb.setAttribute("aria-label", rec.subject || i18n.t("noSubject"));
       cb.addEventListener("change", () => {
         if (cb.checked) state.selectedKeys.add(rec.key);
         else state.selectedKeys.delete(rec.key);
@@ -379,68 +392,59 @@
       tdCheck.appendChild(cb);
       tr.appendChild(tdCheck);
 
-      // Durum
-      const tdStatus = document.createElement("td");
-      tdStatus.appendChild(buildStatusBadge(rec.status));
-      tr.appendChild(tdStatus);
+      // State
+      const tdState = createEl("td", "col-state");
+      tdState.appendChild(buildStatusNode(rec.status));
+      tr.appendChild(tdState);
 
-      // Konu / Gönderen
-      const tdTitle = document.createElement("td");
-      const subjectBtn = createEl("button", "subject-btn", rec.subject || "(Konu yok)");
-      subjectBtn.type = "button";
-      subjectBtn.addEventListener("click", () => openDetailDrawer(rec));
-      tdTitle.appendChild(subjectBtn);
-      tdTitle.appendChild(createEl("div", "meta-line", rec.author || "Gönderen bilinmiyor"));
-      tr.appendChild(tdTitle);
+      // Message
+      const tdMsg = createEl("td", "col-msg");
+      tdMsg.appendChild(createEl("div", "cell-primary", rec.subject || i18n.t("noSubject")));
+      tdMsg.appendChild(createEl("div", "cell-secondary", rec.author || i18n.t("unknownSender")));
+      tr.appendChild(tdMsg);
 
-      // Hesap / Klasör
-      const tdFolder = document.createElement("td");
-      tdFolder.appendChild(createEl("div", "", rec.accountName || rec.accountId || "—"));
-      tdFolder.appendChild(createEl("div", "meta-line", buildFolderDisplay(rec)));
-      tr.appendChild(tdFolder);
+      // Location
+      const tdLoc = createEl("td", "col-loc");
+      tdLoc.appendChild(createEl("div", "cell-primary", rec.accountName || rec.accountId || "—"));
+      tdLoc.appendChild(createEl("div", "cell-secondary", buildFolderDisplay(rec)));
+      tr.appendChild(tdLoc);
 
-      // Geliş Tarihi
-      tr.appendChild(createEl("td", "date-cell", Store.formatDateTR(rec.receivedAt)));
+      // Received
+      const tdRecv = createEl("td", "col-date");
+      tdRecv.appendChild(createEl("div", "date-text", Store.formatDateShort(rec.receivedAt, locale)));
+      tr.appendChild(tdRecv);
 
-      // Silinme Tarihi
-      const tdDeleted = createEl("td", "date-cell");
-      tdDeleted.appendChild(document.createTextNode(formatDeletedDateDisplay(rec)));
+      // Deleted
+      const tdDel = createEl("td", "col-date");
+      tdDel.appendChild(createEl("div", "date-text", formatDeletedDateDisplay(rec)));
       if (rec.permanentlyDeletedAt) {
-        tdDeleted.appendChild(
-          createEl("span", "sub-date", `Kalıcı: ${Store.formatDateTR(rec.permanentlyDeletedAt)}`)
+        tdDel.appendChild(
+          createEl("div", "date-sub", i18n.t("subDatePermanent", Store.formatDateShort(rec.permanentlyDeletedAt, locale)))
         );
       } else if (rec.restoredAt) {
-        tdDeleted.appendChild(
-          createEl("span", "sub-date", `Geri alındı: ${Store.formatDateTR(rec.restoredAt)}`)
+        tdDel.appendChild(
+          createEl("div", "date-sub", i18n.t("subDateRestored", Store.formatDateShort(rec.restoredAt, locale)))
         );
       }
-      tr.appendChild(tdDeleted);
+      tr.appendChild(tdDel);
 
-      // İşlemler
-      const tdActions = createEl("td", "actions-col");
-      const actionsWrap = createEl("div", "row-actions");
-
-      const btnDetail = createEl("button", "btn btn-ghost btn-sm", "Detay");
-      btnDetail.type = "button";
-      btnDetail.addEventListener("click", () => openDetailDrawer(rec));
-      actionsWrap.appendChild(btnDetail);
-
+      // Actions
+      const tdAct = createEl("td", "col-act");
+      const acts = createEl("div", "row-acts");
       if (rec.status !== "deleted") {
-        const btnOpen = createEl("button", "btn btn-secondary btn-sm", "Aç");
+        const btnOpen = createEl("button", "btn btn-subtle btn-xs", i18n.t("btnOpen"));
         btnOpen.type = "button";
         btnOpen.addEventListener("click", () => handleOpenMessage(rec));
-        actionsWrap.appendChild(btnOpen);
+        acts.appendChild(btnOpen);
       }
-
       if (rec.status === "trashed") {
-        const btnRestore = createEl("button", "btn btn-primary btn-sm", "Geri Yükle");
+        const btnRestore = createEl("button", "btn btn-primary btn-xs", i18n.t("btnRestore"));
         btnRestore.type = "button";
         btnRestore.addEventListener("click", () => handleRestoreMessage(rec));
-        actionsWrap.appendChild(btnRestore);
+        acts.appendChild(btnRestore);
       }
-
-      tdActions.appendChild(actionsWrap);
-      tr.appendChild(tdActions);
+      tdAct.appendChild(acts);
+      tr.appendChild(tdAct);
 
       els.tbody.appendChild(tr);
     }
@@ -449,131 +453,126 @@
   }
 
   function renderStats() {
-    const stats = Store.computeStatistics(state.allRecords);
+    const stats = Store.computeStatistics(state.allRecords, Date.now(), {
+      unknownFolderLabel: i18n.t("unknownFolder")
+    });
 
-    // 14-day bar chart
     els.dailyChart.textContent = "";
     const maxDay = Math.max(1, ...stats.dailyDeletions.map((d) => d.count));
     for (const day of stats.dailyDeletions) {
       const col = createEl("div", "bar-col");
-      col.appendChild(createEl("span", "bar-count", day.count > 0 ? String(day.count) : ""));
-      const track = createEl("div", "bar-track");
+      col.appendChild(createEl("span", "bar-num", day.count > 0 ? String(day.count) : ""));
+      const rail = createEl("div", "bar-rail");
       const fill = createEl("div", "bar-fill");
       const pct = day.count > 0 ? Math.max(6, Math.round((day.count / maxDay) * 100)) : 0;
       fill.style.height = `${pct}%`;
-      track.appendChild(fill);
-      col.appendChild(track);
-      col.appendChild(createEl("span", "bar-label", day.label));
+      rail.appendChild(fill);
+      col.appendChild(rail);
+      col.appendChild(createEl("span", "bar-day", day.label));
       els.dailyChart.appendChild(col);
     }
 
-    // Accounts breakdown
     els.accountStatsList.textContent = "";
     if (stats.byAccount.length === 0) {
-      els.accountStatsList.appendChild(createEl("p", "card-desc", "Henüz hesap verisi yok."));
+      els.accountStatsList.appendChild(createEl("p", "footnote", i18n.t("statsNoAccountData")));
     } else {
       const maxAcc = Math.max(1, stats.byAccount[0].total);
       for (const acc of stats.byAccount) {
-        const row = createEl("div", "stat-row");
-        const top = createEl("div", "stat-row-top");
+        const row = createEl("div", "breakdown-row");
+        const top = createEl("div", "breakdown-top");
         top.appendChild(createEl("strong", "", acc.accountName));
-        top.appendChild(createEl("span", "", `${acc.total} kayıt`));
+        top.appendChild(createEl("span", "", i18n.t("statsAccountRecords", acc.total)));
         row.appendChild(top);
         row.appendChild(
-          createEl(
-            "div",
-            "stat-row-sub",
-            `Aktif: ${acc.active} • Çöp: ${acc.trashed} • Kalıcı silinen: ${acc.deleted}`
-          )
+          createEl("div", "breakdown-sub", i18n.t("statsAccountBreakdown", [acc.active, acc.trashed, acc.deleted]))
         );
-        const track = createEl("div", "progress-track");
-        const fill = createEl("div", "progress-fill");
+        const bar = createEl("div", "bar-horiz");
+        const fill = document.createElement("div");
         fill.style.width = `${Math.round((acc.total / maxAcc) * 100)}%`;
-        track.appendChild(fill);
-        row.appendChild(track);
+        bar.appendChild(fill);
+        row.appendChild(bar);
         els.accountStatsList.appendChild(row);
       }
     }
 
-    // Top folders
     els.folderStatsList.textContent = "";
     if (stats.topDeletedFolders.length === 0) {
-      els.folderStatsList.appendChild(createEl("p", "card-desc", "Henüz silinen mail klasör verisi yok."));
+      els.folderStatsList.appendChild(createEl("p", "footnote", i18n.t("statsNoFolderData")));
     } else {
       const maxFolder = Math.max(1, stats.topDeletedFolders[0].count);
       for (const item of stats.topDeletedFolders) {
-        const row = createEl("div", "stat-row");
-        const top = createEl("div", "stat-row-top");
+        const row = createEl("div", "breakdown-row");
+        const top = createEl("div", "breakdown-top");
         top.appendChild(createEl("strong", "", item.folder));
-        top.appendChild(createEl("span", "", `${item.count} silinen`));
+        top.appendChild(createEl("span", "", i18n.t("statsFolderDeletedCount", item.count)));
         row.appendChild(top);
-        const track = createEl("div", "progress-track");
-        const fill = createEl("div", "progress-fill");
+        const bar = createEl("div", "bar-horiz");
+        const fill = document.createElement("div");
         fill.style.width = `${Math.round((item.count / maxFolder) * 100)}%`;
-        track.appendChild(fill);
-        row.appendChild(track);
+        bar.appendChild(fill);
+        row.appendChild(bar);
         els.folderStatsList.appendChild(row);
       }
     }
   }
 
   function openDetailDrawer(rec) {
+    const locale = i18n.getLocale();
     state.activeDrawerKey = rec.key;
-    els.drawerSubject.textContent = rec.subject || "(Konu yok)";
+    els.drawerSubject.textContent = rec.subject || i18n.t("noSubject");
+    els.drawerStatusLine.textContent = "";
+    els.drawerStatusLine.appendChild(buildStatusNode(rec.status));
     els.drawerBody.textContent = "";
     els.drawerFooter.textContent = "";
 
     const rows = [
-      { label: "Durum", node: buildStatusBadge(rec.status) },
-      { label: "Gönderen", text: rec.author || "—" },
-      { label: "Hesap", text: rec.accountName || rec.accountId || "—" },
-      { label: "Orijinal Klasör", text: rec.originalFolderPath || "—" },
-      { label: "Mevcut Klasör", text: rec.currentFolderPath || "—" },
-      { label: "Geliş Tarihi", text: Store.formatDateTR(rec.receivedAt) },
-      { label: "Silinme Tarihi", text: formatDeletedDateDisplay(rec) },
-      { label: "Kalıcı Silinme Tarihi", text: Store.formatDateTR(rec.permanentlyDeletedAt) },
-      { label: "Geri Yüklenme Tarihi", text: Store.formatDateTR(rec.restoredAt) },
-      { label: "Günlüğe İlk Eklenme", text: Store.formatDateTR(rec.recordedAt) }
+      { label: i18n.t("detailSender"), text: rec.author || "—" },
+      { label: i18n.t("detailAccount"), text: rec.accountName || rec.accountId || "—" },
+      { label: i18n.t("detailOrigFolder"), text: rec.originalFolderPath || "—" },
+      { label: i18n.t("detailCurrFolder"), text: rec.currentFolderPath || "—" },
+      { label: i18n.t("detailReceivedAt"), text: Store.formatDate(rec.receivedAt, locale) },
+      { label: i18n.t("detailDeletedAt"), text: rec.deletedAt != null ? Store.formatDate(rec.deletedAt, locale) : formatDeletedDateDisplay(rec) },
+      { label: i18n.t("detailPermDeletedAt"), text: Store.formatDate(rec.permanentlyDeletedAt, locale) },
+      { label: i18n.t("detailRestoredAt"), text: Store.formatDate(rec.restoredAt, locale) },
+      { label: i18n.t("detailRecordedAt"), text: Store.formatDate(rec.recordedAt, locale) }
     ];
 
     for (const item of rows) {
-      const wrap = createEl("div", "detail-row");
-      wrap.appendChild(createEl("span", "detail-label", item.label));
-      if (item.node) {
-        wrap.appendChild(item.node);
-      } else {
-        wrap.appendChild(createEl("div", "detail-value", item.text));
-      }
+      const wrap = createEl("div", "kv-row");
+      wrap.appendChild(createEl("span", "kv-label", item.label));
+      wrap.appendChild(createEl("span", "kv-val", item.text));
       els.drawerBody.appendChild(wrap);
     }
 
     if (rec.headerMessageId) {
-      const idWrap = createEl("div", "detail-row");
-      idWrap.appendChild(createEl("span", "detail-label", "Message-ID"));
-      idWrap.appendChild(createEl("div", "detail-mono", rec.headerMessageId));
-      const copyBtn = createEl("button", "btn btn-ghost btn-sm", "Message-ID Kopyala");
+      const idWrap = createEl("div", "kv-row");
+      idWrap.appendChild(createEl("span", "kv-label", "Message-ID"));
+      const box = createEl("div", "mono-box");
+      box.appendChild(createEl("code", "", rec.headerMessageId));
+      const copyBtn = createEl("button", "btn btn-ghost btn-xs", i18n.t("btnCopyMessageId"));
       copyBtn.type = "button";
       copyBtn.addEventListener("click", async () => {
         try {
           await navigator.clipboard.writeText(rec.headerMessageId);
-          showToast("Message-ID panoya kopyalandı.");
+          showToast(i18n.t("toastCopiedId"));
         } catch (_err) {
-          showToast("Kopyalanamadı.", "error");
+          showToast(i18n.t("toastCopyFailed"), "error");
         }
       });
-      idWrap.appendChild(copyBtn);
+      box.appendChild(copyBtn);
+      idWrap.appendChild(box);
       els.drawerBody.appendChild(idWrap);
     }
 
     if (rec.status !== "deleted") {
-      const btnOpen = createEl("button", "btn btn-secondary btn-sm", "Thunderbird'de Aç");
+      const btnOpen = createEl("button", "btn btn-subtle btn-sm", i18n.t("btnOpenInThunderbird"));
       btnOpen.type = "button";
       btnOpen.addEventListener("click", () => handleOpenMessage(rec));
       els.drawerFooter.appendChild(btnOpen);
     }
 
     if (rec.status === "trashed") {
-      const btnRestore = createEl("button", "btn btn-primary btn-sm", "Orijinal Klasöre Geri Yükle");
+      const btnRestore = createEl("button", "btn btn-primary btn-sm", i18n.t("btnRestoreOriginal"));
       btnRestore.type = "button";
       btnRestore.addEventListener("click", async () => {
         await handleRestoreMessage(rec);
@@ -582,7 +581,7 @@
       els.drawerFooter.appendChild(btnRestore);
     }
 
-    const btnDel = createEl("button", "btn btn-danger-outline btn-sm", "Kaydı Günlükten Sil");
+    const btnDel = createEl("button", "btn btn-danger-ghost btn-sm", i18n.t("btnRemoveFromLog"));
     btnDel.type = "button";
     btnDel.addEventListener("click", async () => {
       await handleRemoveRecord(rec);
@@ -590,14 +589,16 @@
     });
     els.drawerFooter.appendChild(btnDel);
 
-    els.drawerBackdrop.classList.remove("hidden");
     els.detailDrawer.classList.remove("hidden");
+    els.splitWorkspace?.classList.add("has-inspector");
+    renderTable();
   }
 
   function closeDetailDrawer() {
     state.activeDrawerKey = null;
-    els.drawerBackdrop.classList.add("hidden");
     els.detailDrawer.classList.add("hidden");
+    els.splitWorkspace?.classList.remove("has-inspector");
+    renderTable();
   }
 
   function populateSettingsForm() {
@@ -606,6 +607,7 @@
     els.setTrackTrash.checked = Boolean(s.trackTrash);
     els.setTrackPermanent.checked = Boolean(s.trackPermanentDelete);
     els.setShowBadge.checked = Boolean(s.showBadgeCount);
+    els.setLanguage.value = s.language || "auto";
     els.setMaxRecords.value = String(s.maxRecords || Store.DEFAULT_MAX_RECORDS);
     els.setTheme.value = s.theme || "system";
   }
@@ -613,12 +615,10 @@
   async function handleOpenMessage(rec) {
     try {
       const res = await Actions.openMessage(api, rec);
-      if (!res.ok) {
-        showToast(res.error, "error");
-      }
+      if (!res.ok) showToast(localizeActionError(res), "error");
     } catch (err) {
-      console.error("[MailAudit] Mail açılamadı:", err);
-      showToast("Mail açılırken bir hata oluştu.", "error");
+      console.error("[MailLedger] Open error:", err);
+      showToast(i18n.t("toastOpenFailed"), "error");
     }
   }
 
@@ -626,13 +626,13 @@
     try {
       const res = await Actions.restoreMessage(api, Store, rec);
       if (!res.ok) {
-        showToast(res.error, "error");
+        showToast(localizeActionError(res), "error");
         return;
       }
-      showToast("Mail orijinal klasörüne geri yüklendi.", "success");
+      showToast(i18n.t("toastRestored"), "success");
     } catch (err) {
-      console.error("[MailAudit] Geri yükleme hatası:", err);
-      showToast("Mail geri yüklenemedi.", "error");
+      console.error("[MailLedger] Restore error:", err);
+      showToast(i18n.t("toastRestoreFailed"), "error");
     }
   }
 
@@ -640,10 +640,10 @@
     try {
       state.selectedKeys.delete(rec.key);
       await storageManager.removeRecord(rec.key);
-      showToast("Kayıt günlükten silindi.");
+      showToast(i18n.t("toastRemoved"));
     } catch (err) {
-      console.error("[MailAudit] Kayıt silinemedi:", err);
-      showToast("Kayıt silinirken hata oluştu.", "error");
+      console.error("[MailLedger] Remove error:", err);
+      showToast(i18n.t("toastRemoveFailed"), "error");
     }
   }
 
@@ -651,9 +651,7 @@
     const selectedTrashed = state.allRecords.filter(
       (r) => state.selectedKeys.has(r.key) && r.status === "trashed"
     );
-    if (selectedTrashed.length === 0) {
-      return;
-    }
+    if (selectedTrashed.length === 0) return;
 
     let okCount = 0;
     let failCount = 0;
@@ -669,9 +667,9 @@
 
     state.selectedKeys.clear();
     if (failCount === 0) {
-      showToast(`${okCount} mail orijinal klasörüne geri yüklendi.`, "success");
+      showToast(i18n.t("toastBulkRestoredOk", okCount), "success");
     } else {
-      showToast(`${okCount} mail geri yüklendi, ${failCount} mail bulunamadı.`, "error");
+      showToast(i18n.t("toastBulkRestoredPartial", [okCount, failCount]), "error");
     }
   }
 
@@ -680,7 +678,7 @@
     if (keys.length === 0) return;
     await storageManager.removeRecordsBulk(keys);
     state.selectedKeys.clear();
-    showToast(`${keys.length} kayıt günlükten silindi.`);
+    showToast(i18n.t("toastBulkRemoved", keys.length));
   }
 
   async function runFolderScan(specialUse) {
@@ -691,22 +689,28 @@
     els.btnScanTrash.disabled = true;
     els.scanStatusBar.classList.remove("hidden");
 
-    const label = specialUse === "trash" ? "Çöp Kutuları" : "Gelen Kutuları";
     const maxKeep = Number(els.scanLimitSelect.value) || 500;
-    els.scanStatusBar.textContent = `${label} taranıyor...`;
+    els.scanStatusBar.textContent = specialUse === "trash"
+      ? i18n.t("toastScanningTrash")
+      : i18n.t("toastScanningInboxes");
 
     try {
       const res = await Actions.scanFoldersByUse(api, Store, storageManager, {
         specialUse,
         maxKeep,
         onProgress: ({ index, total, accountName, folderName }) => {
-          els.scanStatusBar.textContent = `Taranıyor (${index}/${total}): ${accountName} — ${folderName}`;
+          els.scanStatusBar.textContent = i18n.t("toastScanningProgress", [
+            index,
+            total,
+            accountName,
+            folderName
+          ]);
         }
       });
-      showToast(`${res.folderCount} klasör tarandı, ${res.messageCount} mail işlendi.`, "success");
+      showToast(i18n.t("toastScanDone", [res.folderCount, res.messageCount]), "success");
     } catch (err) {
-      console.error("[MailAudit] Tarama hatası:", err);
-      showToast(`${label} taranırken bir hata oluştu.`, "error");
+      console.error("[MailLedger] Scan error:", err);
+      showToast(i18n.t("toastScanFailed"), "error");
     } finally {
       state.scanning = false;
       els.btnQuickScan.disabled = false;
@@ -730,25 +734,28 @@
   }
 
   function exportCsv(records, suffix) {
-    const csv = Store.exportRecordsToCsv(records);
+    const csv = Store.exportRecordsToCsv(records, {
+      locale: i18n.getLocale(),
+      labels: i18n.buildCsvLabels()
+    });
     const stamp = new Date().toISOString().slice(0, 10);
-    triggerDownload(`mail-tarihce-${suffix}-${stamp}.csv`, csv, "text/csv;charset=utf-8");
-    showToast(`${records.length} kayıt CSV olarak indirildi.`);
+    triggerDownload(`mailledger-${suffix}-${stamp}.csv`, csv, "text/csv;charset=utf-8");
+    showToast(i18n.t("toastCsvExported", records.length));
   }
 
   function exportJson() {
     const payload = {
       exportedAt: new Date().toISOString(),
-      version: "1.1.0",
+      version: "1.2.0",
       records: state.allRecords
     };
     const stamp = new Date().toISOString().slice(0, 10);
     triggerDownload(
-      `mail-tarihce-yedek-${stamp}.json`,
+      `mailledger-backup-${stamp}.json`,
       JSON.stringify(payload, null, 2),
       "application/json;charset=utf-8"
     );
-    showToast(`${state.allRecords.length} kayıt JSON yedeği olarak indirildi.`);
+    showToast(i18n.t("toastJsonExported", state.allRecords.length));
   }
 
   async function handleJsonImport(event) {
@@ -764,12 +771,12 @@
         return res.recordsMap;
       });
       showToast(
-        `İçe aktarma tamamlandı: ${summary.importedCount} yeni, ${summary.updatedCount} güncellendi, ${summary.skippedCount} atlandı.`,
+        i18n.t("toastImportDone", [summary.importedCount, summary.updatedCount, summary.skippedCount]),
         "success"
       );
     } catch (err) {
-      console.error("[MailAudit] JSON içe aktarma hatası:", err);
-      showToast("Geçersiz JSON dosyası; içe aktarılamadı.", "error");
+      console.error("[MailLedger] Import error:", err);
+      showToast(i18n.t("toastImportFailed"), "error");
     } finally {
       els.jsonImportInput.value = "";
     }
@@ -784,17 +791,22 @@
     state.allRecords = records;
     state.settings = settings;
 
-    // Remove stale selected keys that no longer exist
     const existingKeys = new Set(records.map((r) => r.key));
     for (const key of Array.from(state.selectedKeys)) {
       if (!existingKeys.has(key)) state.selectedKeys.delete(key);
     }
 
+    await i18n.setPreference(settings.language);
+    i18n.applyDom(document);
     Actions.applyTheme(settings.theme);
     updateTrackingIndicator();
 
-    const stats = Store.computeStatistics(records);
-    updateKpisAndNav(stats);
+    els.viewTitle.textContent = i18n.t(VIEW_TITLE_KEYS[state.view] || "viewDeletedTitle");
+
+    const stats = Store.computeStatistics(records, Date.now(), {
+      unknownFolderLabel: i18n.t("unknownFolder")
+    });
+    updateMetricsAndNav(stats);
     updateAccountFilterOptions(records);
 
     if (state.view === "stats") {
@@ -803,12 +815,17 @@
       populateSettingsForm();
     } else if (state.view === "deleted" || state.view === "all") {
       renderTable();
+      if (state.activeDrawerKey) {
+        const live = records.find((r) => r.key === state.activeDrawerKey);
+        if (live) openDetailDrawer(live);
+        else closeDetailDrawer();
+      }
     }
   }
 
   async function consumeInitialViewHint() {
     const hashView = (window.location.hash || "").replace(/^#/, "").trim();
-    if (VIEW_META[hashView]) {
+    if (VIEW_TITLE_KEYS[hashView]) {
       switchView(hashView);
       return;
     }
@@ -816,7 +833,7 @@
     try {
       const res = await api.storage.local.get(PENDING_VIEW_KEY);
       const pending = res?.[PENDING_VIEW_KEY];
-      if (pending && VIEW_META[pending]) {
+      if (pending && VIEW_TITLE_KEYS[pending]) {
         await api.storage.local.remove?.(PENDING_VIEW_KEY);
         switchView(pending);
         return;
@@ -897,7 +914,7 @@
       renderTable();
     });
 
-    for (const btn of document.querySelectorAll(".th-sort-btn")) {
+    for (const btn of document.querySelectorAll(".th-sort")) {
       btn.addEventListener("click", () => {
         const col = btn.dataset.sort;
         if (state.sortBy === col) {
@@ -924,7 +941,7 @@
     els.btnBulkRestore.addEventListener("click", handleBulkRestore);
     els.btnBulkCsv.addEventListener("click", () => {
       const selected = state.allRecords.filter((r) => state.selectedKeys.has(r.key));
-      exportCsv(selected, "secili");
+      exportCsv(selected, "selected");
     });
     els.btnBulkRemove.addEventListener("click", handleBulkRemove);
     els.btnBulkClear.addEventListener("click", () => {
@@ -948,9 +965,9 @@
     els.btnScanInboxes.addEventListener("click", () => runFolderScan("inbox"));
     els.btnScanTrash.addEventListener("click", () => runFolderScan("trash"));
 
-    els.btnExportCsv.addEventListener("click", () => exportCsv(state.filteredRecords, "filtreli"));
+    els.btnExportCsv.addEventListener("click", () => exportCsv(state.filteredRecords, "filtered"));
     els.btnExportJson.addEventListener("click", exportJson);
-    els.btnToolsCsvAll.addEventListener("click", () => exportCsv(state.allRecords, "tumu"));
+    els.btnToolsCsvAll.addEventListener("click", () => exportCsv(state.allRecords, "all"));
     els.btnToolsJsonAll.addEventListener("click", exportJson);
     els.jsonImportInput.addEventListener("change", handleJsonImport);
 
@@ -970,13 +987,13 @@
         trackTrash: els.setTrackTrash.checked,
         trackPermanentDelete: els.setTrackPermanent.checked,
         showBadgeCount: els.setShowBadge.checked,
+        language: els.setLanguage.value || "auto",
         maxRecords: Number(els.setMaxRecords.value) || Store.DEFAULT_MAX_RECORDS,
         theme: els.setTheme.value || "system"
       });
-      Actions.applyTheme(state.settings.theme);
-      updateTrackingIndicator();
+      await refreshAll();
       api.runtime.sendMessage({ type: "refreshBadge" }).catch(() => {});
-      showToast("Ayarlar kaydedildi.", "success");
+      showToast(i18n.t("toastSaved"), "success");
     });
 
     els.btnClearTrigger.addEventListener("click", () => {
@@ -988,17 +1005,16 @@
     els.btnClearActive.addEventListener("click", async () => {
       await storageManager.clearRecords("active");
       els.clearConfirmBar.classList.add("hidden");
-      showToast("Aktif mail kayıtları temizlendi; silinen kayıtlar korundu.");
+      showToast(i18n.t("toastClearedActive"));
     });
     els.btnClearAll.addEventListener("click", async () => {
       await storageManager.clearRecords("all");
       state.selectedKeys.clear();
       els.clearConfirmBar.classList.add("hidden");
-      showToast("Tüm günlük temizlendi.");
+      showToast(i18n.t("toastClearedAll"));
     });
 
     els.btnDrawerClose.addEventListener("click", closeDetailDrawer);
-    els.drawerBackdrop.addEventListener("click", closeDetailDrawer);
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape" && state.activeDrawerKey) {
         closeDetailDrawer();
@@ -1015,7 +1031,7 @@
 
     if (api.runtime?.onMessage) {
       api.runtime.onMessage.addListener((msg) => {
-        if (msg && msg.type === "switchView" && VIEW_META[msg.view]) {
+        if (msg && msg.type === "switchView" && VIEW_TITLE_KEYS[msg.view]) {
           switchView(msg.view);
         }
       });
@@ -1026,7 +1042,7 @@
   refreshAll()
     .then(consumeInitialViewHint)
     .catch((err) => {
-      console.error("[MailAudit] İlk yükleme hatası:", err);
-      showToast("Kayıtlar yüklenirken bir hata oluştu.", "error");
+      console.error("[MailLedger] Initial load error:", err);
+      showToast(i18n.t("toastLoadError"), "error");
     });
 })();

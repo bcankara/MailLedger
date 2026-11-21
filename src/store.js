@@ -12,6 +12,7 @@
     trackTrash: true,
     trackPermanentDelete: true,
     showBadgeCount: true,
+    language: "auto", // "auto" | "en" | "tr"
     theme: "system" // "system" | "light" | "dark"
   };
 
@@ -141,13 +142,13 @@
    * @param {{ accountName?: string, folderLabel?: string|null, now?: number }} opts
    * @returns {object}
    */
-  function buildBaseRecord(msg, { accountName, folderLabel, now } = {}) {
+  function buildBaseRecord(msg, { accountName, folderLabel, now, noSubjectLabel } = {}) {
     const timestamp = Number.isFinite(now) ? now : Date.now();
     const accountId = msg?.folder?.accountId || msg?.accountId || "unknown";
     const key = makeRecordKey(msg);
     const subject = msg?.subject && msg.subject.trim()
       ? msg.subject.trim()
-      : "(Konu yok)";
+      : (noSubjectLabel || "");
 
     return {
       key,
@@ -505,10 +506,11 @@
       dateFrom = "",
       dateTo = "",
       sortBy = "deletedAt",
-      sortDir = "desc"
+      sortDir = "desc",
+      locale = "en-US"
     } = options;
 
-    const query = String(search || "").trim().toLocaleLowerCase("tr-TR");
+    const query = String(search || "").trim().toLocaleLowerCase(locale);
     const fromMs = parseDateBoundary(dateFrom, false);
     const toMs = parseDateBoundary(dateTo, true);
     const activeDateField = dateField === "receivedAt" ? "receivedAt" : "deletedAt";
@@ -553,7 +555,7 @@
         ]
           .filter(Boolean)
           .join(" ")
-          .toLocaleLowerCase("tr-TR");
+          .toLocaleLowerCase(locale);
         if (!haystack.includes(query)) {
           return false;
         }
@@ -610,7 +612,7 @@
       if (sortBy === "subject") {
         return dirFactor * String(a.subject || "").localeCompare(
           String(b.subject || ""),
-          "tr-TR",
+          locale,
           { sensitivity: "base" }
         );
       }
@@ -618,7 +620,7 @@
       if (sortBy === "author") {
         return dirFactor * String(a.author || "").localeCompare(
           String(b.author || ""),
-          "tr-TR",
+          locale,
           { sensitivity: "base" }
         );
       }
@@ -648,7 +650,8 @@
    * @param {Array<object>} records
    * @param {number} now
    */
-  function computeStatistics(records, now = Date.now()) {
+  function computeStatistics(records, now = Date.now(), options = {}) {
+    const unknownFolderLabel = options.unknownFolderLabel || "(Unknown Folder)";
     const list = records || [];
     const todayKey = toLocalDateKey(now);
 
@@ -697,7 +700,7 @@
       else if (rec.status === "deleted") acc.deleted += 1;
 
       if (rec.status === "trashed" || rec.status === "deleted") {
-        const folderLabel = rec.originalFolderPath || rec.currentFolderPath || "(Bilinmeyen Klasör)";
+        const folderLabel = rec.originalFolderPath || rec.currentFolderPath || unknownFolderLabel;
         folderCounts.set(folderLabel, (folderCounts.get(folderLabel) || 0) + 1);
       }
 
@@ -789,7 +792,7 @@
       const clean = {
         key: rawKey,
         headerMessageId: typeof raw.headerMessageId === "string" ? raw.headerMessageId.trim() : "",
-        subject: typeof raw.subject === "string" && raw.subject.trim() ? raw.subject.trim() : "(Konu yok)",
+        subject: typeof raw.subject === "string" && raw.subject.trim() ? raw.subject.trim() : "",
         author: typeof raw.author === "string" ? raw.author : "",
         accountId: typeof raw.accountId === "string" && raw.accountId ? raw.accountId : "unknown",
         accountName: typeof raw.accountName === "string" && raw.accountName ? raw.accountName : (raw.accountId || "unknown"),
@@ -835,15 +838,16 @@
   }
 
   /**
-   * Format a timestamp in Turkish locale (DD.MM.YYYY HH:mm:ss).
+   * Format a timestamp for a given Intl locale (default en-US).
    * @param {number|null|undefined} timestamp
+   * @param {string} locale
    * @returns {string}
    */
-  function formatDateTR(timestamp) {
+  function formatDate(timestamp, locale = "en-US") {
     if (timestamp === null || timestamp === undefined || !Number.isFinite(Number(timestamp))) {
       return "—";
     }
-    return new Intl.DateTimeFormat("tr-TR", {
+    return new Intl.DateTimeFormat(locale, {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
@@ -854,11 +858,11 @@
     }).format(new Date(Number(timestamp)));
   }
 
-  function formatDateShortTR(timestamp) {
+  function formatDateShort(timestamp, locale = "en-US") {
     if (timestamp === null || timestamp === undefined || !Number.isFinite(Number(timestamp))) {
       return "—";
     }
-    return new Intl.DateTimeFormat("tr-TR", {
+    return new Intl.DateTimeFormat(locale, {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
@@ -868,11 +872,30 @@
     }).format(new Date(Number(timestamp)));
   }
 
-  function formatStatusTR(status) {
-    if (status === "trashed") return "Çöp Kutusunda";
-    if (status === "deleted") return "Kalıcı Silindi";
-    if (status === "active") return "Aktif (Gelen)";
+  function formatDateTR(timestamp) {
+    return formatDate(timestamp, "tr-TR");
+  }
+
+  function formatDateShortTR(timestamp) {
+    return formatDateShort(timestamp, "tr-TR");
+  }
+
+  function formatStatus(status, statusLabels) {
+    if (statusLabels && Object.prototype.hasOwnProperty.call(statusLabels, status)) {
+      return statusLabels[status];
+    }
+    if (status === "trashed") return "In Trash";
+    if (status === "deleted") return "Permanently Deleted";
+    if (status === "active") return "Active (Received)";
     return String(status || "");
+  }
+
+  function formatStatusTR(status) {
+    return formatStatus(status, {
+      trashed: "Çöp Kutusunda",
+      deleted: "Kalıcı Silindi",
+      active: "Aktif (Gelen)"
+    });
   }
 
   function escapeCsvCell(value) {
@@ -884,37 +907,44 @@
   }
 
   /**
-   * Export records to RFC 4180 CSV with UTF-8 BOM for Turkish Excel compatibility.
+   * Export records to RFC 4180 CSV with UTF-8 BOM for Excel compatibility.
+   * Defaults to English headers/labels unless localized options are passed.
    * @param {Array<object>} records
+   * @param {{ locale?: string, labels?: { headers?: string[], statuses?: Record<string, string>, preExistingTrash?: string } }} options
    * @returns {string}
    */
-  function exportRecordsToCsv(records) {
-    const headers = [
-      "Durum",
-      "Konu",
-      "Gönderen",
-      "Hesap",
-      "Geliş Tarihi",
-      "Silinme Tarihi",
-      "Kalıcı Silinme Tarihi",
-      "Orijinal Klasör",
-      "Mevcut Klasör",
-      "Message-ID"
-    ];
+  function exportRecordsToCsv(records, options = {}) {
+    const locale = options.locale || "en-US";
+    const labels = options.labels || {};
+    const headers = Array.isArray(labels.headers) && labels.headers.length === 10
+      ? labels.headers
+      : [
+          "Status",
+          "Subject",
+          "Sender",
+          "Account",
+          "Received Date",
+          "Deletion Date",
+          "Permanent Deletion Date",
+          "Original Folder",
+          "Current Folder",
+          "Message-ID"
+        ];
+    const preExistingLabel = labels.preExistingTrash || "Before install";
 
     const lines = [headers.map(escapeCsvCell).join(",")];
     for (const rec of records || []) {
       const deletedDisplay = rec.deletedAt != null
-        ? formatDateTR(rec.deletedAt)
-        : (rec.preExistingTrash ? "Kurulum öncesi" : "—");
+        ? formatDate(rec.deletedAt, locale)
+        : (rec.preExistingTrash ? preExistingLabel : "—");
       const row = [
-        formatStatusTR(rec.status),
+        formatStatus(rec.status, labels.statuses),
         rec.subject || "",
         rec.author || "",
         rec.accountName || rec.accountId || "",
-        formatDateTR(rec.receivedAt),
+        formatDate(rec.receivedAt, locale),
         deletedDisplay,
-        formatDateTR(rec.permanentlyDeletedAt),
+        formatDate(rec.permanentlyDeletedAt, locale),
         rec.originalFolderPath || "",
         rec.currentFolderPath || "",
         rec.headerMessageId || ""
@@ -1046,8 +1076,11 @@
     filterAndSortRecords,
     computeStatistics,
     importRecordsFromJson,
+    formatDate,
+    formatDateShort,
     formatDateTR,
     formatDateShortTR,
+    formatStatus,
     formatStatusTR,
     exportRecordsToCsv,
     createStorageManager

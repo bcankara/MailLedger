@@ -434,10 +434,10 @@ describe("filterAndSortRecords", () => {
   ];
 
   it("performs Turkish case-insensitive search including İ/i and I/ı", () => {
-    const res1 = Store.filterAndSortRecords(sample, { search: "istanbul" });
+    const res1 = Store.filterAndSortRecords(sample, { search: "istanbul", locale: "tr-TR" });
     assert.deepEqual(res1.map((r) => r.key), ["1"]);
 
-    const res2 = Store.filterAndSortRecords(sample, { search: "ışık" });
+    const res2 = Store.filterAndSortRecords(sample, { search: "ışık", locale: "tr-TR" });
     assert.deepEqual(res2.map((r) => r.key), ["2"]);
   });
 
@@ -587,8 +587,8 @@ describe("importRecordsFromJson", () => {
 });
 
 describe("exportRecordsToCsv", () => {
-  it("prepends UTF-8 BOM, escapes RFC 4180 cells, and labels pre-existing trash", () => {
-    const csv = Store.exportRecordsToCsv([
+  it("prepends UTF-8 BOM, escapes RFC 4180 cells, and supports localized labels", () => {
+    const row = [
       {
         status: "trashed",
         subject: 'Teklif, "Özel"\nRevize',
@@ -602,11 +602,19 @@ describe("exportRecordsToCsv", () => {
         currentFolderPath: "[Gmail]/Çöp Kutusu",
         headerMessageId: "<id@test>"
       }
-    ]);
+    ];
 
-    assert.equal(csv.startsWith("\uFEFF"), true);
-    assert.ok(csv.includes('"Teklif, ""Özel""\nRevize"'));
-    assert.ok(csv.includes("Kurulum öncesi"));
+    const csvEn = Store.exportRecordsToCsv(row);
+    assert.equal(csvEn.startsWith("\uFEFF"), true);
+    assert.ok(csvEn.includes('"Teklif, ""Özel""\nRevize"'));
+    assert.ok(csvEn.includes("Before install"));
+
+    const csvTr = Store.exportRecordsToCsv(row, {
+      locale: "tr-TR",
+      labels: { preExistingTrash: "Kurulum öncesi", statuses: { trashed: "Çöp Kutusu" } }
+    });
+    assert.ok(csvTr.includes("Kurulum öncesi"));
+    assert.ok(csvTr.includes("Çöp Kutusu"));
   });
 });
 

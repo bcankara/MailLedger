@@ -1,4 +1,4 @@
-"""Build and validate the Mail Tarihçe Günlüğü Thunderbird .xpi package."""
+"""Build and validate the MailLedger Thunderbird .xpi package."""
 
 from __future__ import annotations
 
@@ -12,11 +12,14 @@ import zipfile
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 DIST_DIR = ROOT_DIR / "dist"
-OUTPUT_XPI = DIST_DIR / "mail-tarihce-gunlugu.xpi"
+OUTPUT_XPI = DIST_DIR / "MailLedger.xpi"
 
 RUNTIME_FILES = [
     "manifest.json",
+    "_locales/en/messages.json",
+    "_locales/tr/messages.json",
     "icons/icon.svg",
+    "src/i18n.js",
     "src/store.js",
     "src/mailActions.js",
     "src/background.js",
@@ -31,10 +34,10 @@ RUNTIME_FILES = [
     "ui/options.js",
 ]
 
-HTML_ASSET_PATTERN = re.compile(
-    r"""(?:src|href)\s*=\s*"([^"#?]+)" """,
-    re.VERBOSE,
-)
+HTML_ASSET_PATTERN = re.compile(r"""(?:src|href)\s*=\s*"([^"#?]+)" """, re.VERBOSE)
+DATA_I18N_PATTERN = re.compile(r"""data-i18n(?:-[a-z-]+)?\s*=\s*"([A-Za-z0-9_@]+)" """)
+MSG_TOKEN_PATTERN = re.compile(r"""__MSG_([A-Za-z0-9_@]+)__""")
+VALID_KEY_PATTERN = re.compile(r"""^[A-Za-z0-9_@]+$""")
 
 
 def collect_manifest_references(manifest: dict) -> set[str]:
@@ -71,8 +74,9 @@ def collect_manifest_references(manifest: dict) -> set[str]:
     return refs
 
 
-def verify_html_references(zf: zipfile.ZipFile, entries: set[str]) -> None:
-    """Verify every local script/style/image reference in packaged HTML files exists."""
+def verify_html_references(zf: zipfile.ZipFile, entries: set[str]) -> set[str]:
+    """Verify every local asset in HTML files exists and return referenced i18n keys."""
+    i18n_keys: set[str] = set()
     for entry in sorted(entries):
         if not entry.endswith(".html"):
             continue
@@ -84,6 +88,43 @@ def verify_html_references(zf: zipfile.ZipFile, entries: set[str]) -> None:
             resolved = posixpath.normpath(posixpath.join(base_dir, ref))
             if resolved not in entries:
                 raise ValueError(f"{entry} references missing asset: {ref} (resolved: {resolved})")
+        for key in DATA_I18N_PATTERN.findall(html_text):
+            i18n_keys.add(key)
+    return i18n_keys
+
+
+def verify_locales(zf: zipfile.ZipFile, manifest_text: str, manifest: dict, html_i18n_keys: set[str]) -> None:
+    """Verify default_locale, locale parity between EN and TR, and all referenced keys."""
+    default_locale = manifest.get("default_locale")
+    if not default_locale:
+        raise ValueError("manifest.json must declare default_locale when _locales/ is packaged")
+
+    default_path = f"_locales/{default_locale}/messages.json"
+    if default_path not in zf.namelist():
+        raise ValueError(f"Default locale file missing: {default_path}")
+
+    en_catalog = json.loads(zf.read("_locales/en/messages.json").decode("utf-8"))
+    tr_catalog = json.loads(zf.read("_locales/tr/messages.json").decode("utf-8"))
+
+    en_keys = set(en_catalog.keys())
+    tr_keys = set(tr_catalog.keys())
+
+    for key in sorted(en_keys | tr_keys):
+        if not VALID_KEY_PATTERN.match(key):
+            raise ValueError(f"Invalid WebExtension i18n key name: {key}")
+
+    missing_in_tr = sorted(en_keys - tr_keys)
+    missing_in_en = sorted(tr_keys - en_keys)
+    if missing_in_tr:
+        raise ValueError(f"Keys missing in _locales/tr/messages.json: {missing_in_tr}")
+    if missing_in_en:
+        raise ValueError(f"Keys missing in _locales/en/messages.json: {missing_in_en}")
+
+    manifest_msg_keys = set(MSG_TOKEN_PATTERN.findall(manifest_text))
+    required_keys = manifest_msg_keys | html_i18n_keys
+    missing_required = sorted(required_keys - en_keys)
+    if missing_required:
+        raise ValueError(f"Missing i18n keys referenced by manifest/HTML: {missing_required}")
 
 
 def build_xpi() -> Path:
@@ -106,20 +147,22 @@ def build_xpi() -> Path:
         if "manifest.json" not in entry_set:
             raise ValueError("manifest.json is missing from archive root")
 
-        manifest = json.loads(zf.read("manifest.json").decode("utf-8"))
+        manifest_text = zf.read("manifest.json").decode("utf-8")
+        manifest = json.loads(manifest_text)
         manifest_refs = collect_manifest_references(manifest)
         missing_refs = sorted(manifest_refs - entry_set)
         if missing_refs:
             raise ValueError(f"Files referenced in manifest.json missing from .xpi: {missing_refs}")
 
-        verify_html_references(zf, entry_set)
+        html_i18n_keys = verify_html_references(zf, entry_set)
+        verify_locales(zf, manifest_text, manifest, html_i18n_keys)
 
         print(f"Built: {OUTPUT_XPI}")
-        print(f"Version: {manifest.get('version')}")
+        print(f"Version: {manifest.get('version')} (default_locale={manifest.get('default_locale')})")
         print("Archive entries:")
         for entry in entries:
             print(f"  - {entry}")
-        print("Manifest & HTML asset verification: OK")
+        print("Manifest, HTML asset, and i18n verification: OK")
 
     return OUTPUT_XPI
 

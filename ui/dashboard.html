@@ -1,420 +1,437 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mail Tarihçe Günlüğü</title>
+  <title data-i18n="extensionName">MailLedger</title>
   <link rel="stylesheet" href="dashboard.css" />
 </head>
 <body>
-  <div class="app-layout">
-    <aside class="sidebar" aria-label="Ana gezinme">
-      <div class="sidebar-brand">
-        <img src="../icons/icon.svg" alt="" class="brand-logo" width="32" height="32" />
-        <div class="brand-meta">
-          <h1>Mail Tarihçe</h1>
-          <span class="brand-version">v1.1.0 • Yerel Günlük</span>
+  <div class="app-frame">
+    <!-- LEFT NAVIGATION RAIL -->
+    <aside class="rail" aria-label="Navigation">
+      <div class="rail-brand">
+        <img src="../icons/icon.svg" alt="" width="22" height="22" />
+        <div class="brand-text">
+          <span class="brand-title" data-i18n="brandTitle">MailLedger</span>
+          <span class="brand-meta" data-i18n="brandMeta">v1.2.0 · Local</span>
         </div>
       </div>
 
-      <div class="tracking-pill" id="tracking-indicator">
-        <span class="status-dot" id="tracking-dot"></span>
-        <span id="tracking-text">Otomatik izleme aktif</span>
-      </div>
-
-      <nav class="side-nav" id="side-nav">
-        <button type="button" class="nav-item active" data-view="deleted">
-          <span class="nav-label">Silinenler</span>
+      <nav class="rail-nav" id="side-nav">
+        <button type="button" class="nav-link active" data-view="deleted">
+          <svg class="nav-icon" viewBox="0 0 16 16" width="15" height="15" aria-hidden="true">
+            <path d="M2.5 4.2h11M6 4.2V2.8c0-.4.3-.8.8-.8h2.4c.5 0 .8.4.8.8v1.4M4 4.2l.7 8.8c.1.6.5 1 1.1 1h4.4c.6 0 1-.4 1.1-1l.7-8.8" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <span class="nav-label" data-i18n="navDeleted">Deleted</span>
           <span class="nav-count" id="nav-count-deleted">0</span>
         </button>
-        <button type="button" class="nav-item" data-view="all">
-          <span class="nav-label">Tüm Mailler</span>
+
+        <button type="button" class="nav-link" data-view="all">
+          <svg class="nav-icon" viewBox="0 0 16 16" width="15" height="15" aria-hidden="true">
+            <rect x="2" y="3.2" width="12" height="9.6" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.35" />
+            <path d="M2.5 4.2L8 8.4l5.5-4.2" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <span class="nav-label" data-i18n="navAll">All Mail</span>
           <span class="nav-count" id="nav-count-all">0</span>
         </button>
-        <button type="button" class="nav-item" data-view="stats">
-          <span class="nav-label">İstatistikler</span>
+
+        <button type="button" class="nav-link" data-view="stats">
+          <svg class="nav-icon" viewBox="0 0 16 16" width="15" height="15" aria-hidden="true">
+            <path d="M2.5 13V9.5M6.2 13V6M9.8 13V8M13.5 13V3.2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+          </svg>
+          <span class="nav-label" data-i18n="navStats">Activity</span>
         </button>
-        <button type="button" class="nav-item" data-view="tools">
-          <span class="nav-label">Tarama &amp; Yedek</span>
+
+        <button type="button" class="nav-link" data-view="tools">
+          <svg class="nav-icon" viewBox="0 0 16 16" width="15" height="15" aria-hidden="true">
+            <ellipse cx="8" cy="4" rx="5.2" ry="2" fill="none" stroke="currentColor" stroke-width="1.35" />
+            <path d="M2.8 4v4c0 1.1 2.3 2 5.2 2s5.2-.9 5.2-2V4M2.8 8v4c0 1.1 2.3 2 5.2 2s5.2-.9 5.2-2V8" fill="none" stroke="currentColor" stroke-width="1.35" />
+          </svg>
+          <span class="nav-label" data-i18n="navTools">Index &amp; Backup</span>
         </button>
-        <button type="button" class="nav-item" data-view="settings">
-          <span class="nav-label">Ayarlar</span>
+
+        <button type="button" class="nav-link" data-view="settings">
+          <svg class="nav-icon" viewBox="0 0 16 16" width="15" height="15" aria-hidden="true">
+            <path d="M2.5 4.5h11M2.5 8h11M2.5 11.5h11" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" />
+            <circle cx="5.5" cy="4.5" r="1.4" fill="var(--chrome)" stroke="currentColor" stroke-width="1.35" />
+            <circle cx="10.5" cy="8" r="1.4" fill="var(--chrome)" stroke="currentColor" stroke-width="1.35" />
+            <circle cx="6.5" cy="11.5" r="1.4" fill="var(--chrome)" stroke="currentColor" stroke-width="1.35" />
+          </svg>
+          <span class="nav-label" data-i18n="navSettings">Settings</span>
         </button>
       </nav>
 
-      <div class="sidebar-footer">
-        <button id="btn-quick-scan" type="button" class="btn btn-secondary btn-full btn-sm">
-          Gelen Kutularını Tara
-        </button>
-        <button id="btn-theme-cycle" type="button" class="btn btn-ghost btn-full btn-sm">
-          Tema: Sistem
-        </button>
+      <div class="rail-footer">
+        <div class="tracking-line">
+          <span class="dot" id="tracking-dot"></span>
+          <span id="tracking-text" data-i18n="trackingActive">Tracking active</span>
+        </div>
+        <div class="rail-actions">
+          <button id="btn-quick-scan" type="button" class="rail-btn" data-i18n="btnQuickScan">
+            Index Inboxes
+          </button>
+          <button id="btn-theme-cycle" type="button" class="rail-btn" data-i18n="themeBtnSystem">
+            Theme: System
+          </button>
+        </div>
       </div>
     </aside>
 
-    <div class="workspace">
-      <header class="workspace-header">
-        <div>
-          <h2 id="view-title">Silinen Mailler</h2>
-          <p id="view-subtitle" class="subtitle">
-            Çöp Kutusu'na atılan veya kalıcı silinen mailleri silinme tarihine göre sıralayın, arayın ve geri yükleyin.
-          </p>
+    <!-- MAIN CONTENT PANE -->
+    <div class="main-pane">
+      <header class="topbar">
+        <div class="topbar-left">
+          <h1 id="view-title" data-i18n="viewDeletedTitle">Deleted Mail</h1>
+          <div class="inline-metrics" id="inline-metrics">
+            <span class="metric"><strong id="kpi-trashed">0</strong> <span data-i18n="kpiTrashed">in trash</span></span>
+            <span class="metric-sep">·</span>
+            <span class="metric"><strong id="kpi-deleted">0</strong> <span data-i18n="kpiDeleted">purged</span></span>
+            <span class="metric-sep">·</span>
+            <span class="metric"><strong id="kpi-today">0</strong> <span data-i18n="kpiToday">deleted today</span></span>
+            <span class="metric-sep">·</span>
+            <span class="metric"><strong id="kpi-total">0</strong> <span data-i18n="kpiTotal">total</span></span>
+          </div>
         </div>
-        <div class="header-actions" id="log-header-actions">
-          <button id="btn-export-csv" type="button" class="btn btn-secondary btn-sm">
-            CSV İndir
+
+        <div class="topbar-actions" id="log-header-actions">
+          <button id="btn-export-csv" type="button" class="btn btn-subtle btn-sm" data-i18n="btnExportCsv">
+            CSV
           </button>
-          <button id="btn-export-json" type="button" class="btn btn-secondary btn-sm">
-            JSON Yedek
+          <button id="btn-export-json" type="button" class="btn btn-subtle btn-sm" data-i18n="btnExportJson">
+            JSON
           </button>
         </div>
       </header>
 
-      <div id="scan-status-bar" class="scan-status-bar hidden" aria-live="polite"></div>
+      <div id="scan-status-bar" class="scan-banner hidden" aria-live="polite"></div>
 
-      <!-- VIEW: LOG (deleted & all share this panel) -->
-      <section id="view-log" class="view-section">
-        <div class="kpi-grid" aria-label="Özet istatistikler">
-          <article class="kpi-card">
-            <span class="kpi-label">Toplam Kayıt</span>
-            <strong id="kpi-total" class="kpi-value">0</strong>
-          </article>
-          <article class="kpi-card kpi-amber">
-            <span class="kpi-label">Çöp Kutusunda</span>
-            <strong id="kpi-trashed" class="kpi-value">0</strong>
-          </article>
-          <article class="kpi-card kpi-red">
-            <span class="kpi-label">Kalıcı Silinen</span>
-            <strong id="kpi-deleted" class="kpi-value">0</strong>
-          </article>
-          <article class="kpi-card kpi-green">
-            <span class="kpi-label">Aktif (Gelen)</span>
-            <strong id="kpi-active" class="kpi-value">0</strong>
-          </article>
-          <article class="kpi-card kpi-blue">
-            <span class="kpi-label">Bugün Silinen</span>
-            <strong id="kpi-today" class="kpi-value">0</strong>
-          </article>
+      <!-- VIEW: LEDGER TABLE (deleted & all) -->
+      <section id="view-log" class="pane-body ledger-view">
+        <div class="filter-bar">
+          <div class="search-box">
+            <svg class="search-icon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+              <circle cx="7" cy="7" r="4.8" fill="none" stroke="currentColor" stroke-width="1.45" />
+              <path d="M10.7 10.7L14 14" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" />
+            </svg>
+            <input
+              id="search-input"
+              type="search"
+              data-i18n-placeholder="searchPlaceholder"
+              placeholder="Filter by subject, sender, folder, or Message-ID..."
+              autocomplete="off"
+            />
+          </div>
+
+          <div class="segmented" id="status-pills" role="tablist" aria-label="State filter">
+            <button type="button" class="seg-btn" data-status="all" data-i18n="pillAll">All</button>
+            <button type="button" class="seg-btn active" data-status="deleted_any" data-i18n="pillDeletedAny">Deleted</button>
+            <button type="button" class="seg-btn" data-status="trashed" data-i18n="pillTrashed">Trash</button>
+            <button type="button" class="seg-btn" data-status="deleted" data-i18n="pillDeleted">Purged</button>
+            <button type="button" class="seg-btn" data-status="active" data-i18n="pillActive">Active</button>
+          </div>
+
+          <select id="account-filter" class="compact-select" aria-label="Account">
+            <option value="all" data-i18n="allAccounts">All accounts</option>
+          </select>
+
+          <select id="sort-select" class="compact-select" aria-label="Sort">
+            <option value="deletedAt:desc" data-i18n="sortDeletedDesc">Deleted · Newest</option>
+            <option value="deletedAt:asc" data-i18n="sortDeletedAsc">Deleted · Oldest</option>
+            <option value="receivedAt:desc" data-i18n="sortReceivedDesc">Received · Newest</option>
+            <option value="receivedAt:asc" data-i18n="sortReceivedAsc">Received · Oldest</option>
+            <option value="activity:desc" data-i18n="sortActivityDesc">Activity · Latest</option>
+            <option value="subject:asc" data-i18n="sortSubjectAsc">Subject · A–Z</option>
+            <option value="author:asc" data-i18n="sortAuthorAsc">Sender · A–Z</option>
+          </select>
         </div>
 
-        <div class="filter-panel">
-          <div class="status-pills" id="status-pills" role="tablist" aria-label="Durum filtresi">
-            <button type="button" class="pill" data-status="all">Tümü</button>
-            <button type="button" class="pill active" data-status="deleted_any">Silinenler (Tümü)</button>
-            <button type="button" class="pill" data-status="trashed">Çöp Kutusunda</button>
-            <button type="button" class="pill" data-status="deleted">Kalıcı Silinen</button>
-            <button type="button" class="pill" data-status="active">Aktif (Gelen)</button>
-          </div>
-
-          <div class="filter-controls">
-            <label class="control-field">
-              <span class="sr-only">Ara</span>
-              <input
-                id="search-input"
-                type="search"
-                placeholder="Konu, gönderen, klasör, hesap veya Message-ID ara..."
-                autocomplete="off"
-              />
-            </label>
-
-            <label class="control-field">
-              <span class="sr-only">Hesap filtresi</span>
-              <select id="account-filter">
-                <option value="all">Tüm Hesaplar</option>
-              </select>
-            </label>
-
-            <label class="control-field">
-              <span class="sr-only">Sıralama</span>
-              <select id="sort-select">
-                <option value="deletedAt:desc">Silinme Tarihi (En Yeni)</option>
-                <option value="deletedAt:asc">Silinme Tarihi (En Eski)</option>
-                <option value="receivedAt:desc">Geliş Tarihi (En Yeni)</option>
-                <option value="receivedAt:asc">Geliş Tarihi (En Eski)</option>
-                <option value="activity:desc">Son Hareket (En Yeni)</option>
-                <option value="subject:asc">Konu (A-Z)</option>
-                <option value="author:asc">Gönderen (A-Z)</option>
-              </select>
-            </label>
-          </div>
-
-          <div class="date-filter-row">
-            <label class="inline-field">
-              <span>Tarih alanı</span>
-              <select id="date-field-select">
-                <option value="deletedAt">Silinme Tarihi</option>
-                <option value="receivedAt">Geliş Tarihi</option>
-              </select>
-            </label>
-            <label class="inline-field">
-              <span>Başlangıç</span>
-              <input id="date-from-input" type="date" />
-            </label>
-            <label class="inline-field">
-              <span>Bitiş</span>
-              <input id="date-to-input" type="date" />
-            </label>
-            <button id="btn-reset-filters" type="button" class="btn btn-ghost btn-sm">
-              Filtreleri Sıfırla
+        <div class="subfilter-bar">
+          <div class="date-range-group">
+            <select id="date-field-select" class="compact-select compact-xs" aria-label="Date field">
+              <option value="deletedAt" data-i18n="dateFieldDeleted">Deleted date</option>
+              <option value="receivedAt" data-i18n="dateFieldReceived">Received date</option>
+            </select>
+            <input id="date-from-input" type="date" class="compact-date" data-i18n-aria-label="dateFromAria" aria-label="Start date" />
+            <span class="range-dash">–</span>
+            <input id="date-to-input" type="date" class="compact-date" data-i18n-aria-label="dateToAria" aria-label="End date" />
+            <button id="btn-reset-filters" type="button" class="btn btn-ghost btn-xs" data-i18n="btnResetFilters">
+              Reset
             </button>
+          </div>
+
+          <div id="bulk-action-bar" class="bulk-inline hidden" role="region" aria-label="Selection actions">
+            <span id="bulk-selected-text" class="bulk-count">0 selected</span>
+            <button id="btn-bulk-restore" type="button" class="btn btn-primary btn-xs" data-i18n="btnBulkRestore">Restore</button>
+            <button id="btn-bulk-csv" type="button" class="btn btn-subtle btn-xs" data-i18n="btnBulkCsv">Export CSV</button>
+            <button id="btn-bulk-remove" type="button" class="btn btn-danger-ghost btn-xs" data-i18n="btnBulkRemove">Remove from log</button>
+            <button id="btn-bulk-clear" type="button" class="btn btn-ghost btn-xs" data-i18n="btnBulkClear">Clear</button>
           </div>
         </div>
 
-        <div id="bulk-action-bar" class="bulk-bar hidden" role="region" aria-label="Toplu işlemler">
-          <span id="bulk-selected-text" class="bulk-text">0 kayıt seçildi</span>
-          <div class="bulk-actions">
-            <button id="btn-bulk-restore" type="button" class="btn btn-primary btn-sm">
-              Seçilenleri Geri Yükle
-            </button>
-            <button id="btn-bulk-csv" type="button" class="btn btn-secondary btn-sm">
-              Seçilenleri CSV İndir
-            </button>
-            <button id="btn-bulk-remove" type="button" class="btn btn-danger-outline btn-sm">
-              Günlükten Sil
-            </button>
-            <button id="btn-bulk-clear" type="button" class="btn btn-ghost btn-sm">
-              Seçimi Temizle
-            </button>
-          </div>
-        </div>
-
-        <div class="table-card">
-          <div class="table-wrap">
-            <table class="audit-table">
+        <div class="split-workspace">
+          <div class="table-scroller">
+            <table class="ledger-table">
               <thead>
                 <tr>
-                  <th class="check-col">
-                    <input id="select-all-page" type="checkbox" aria-label="Sayfadaki tümünü seç" />
+                  <th class="col-check">
+                    <input id="select-all-page" type="checkbox" data-i18n-aria-label="selectAllAria" aria-label="Select all rows on page" />
                   </th>
-                  <th>
-                    <button type="button" class="th-sort-btn" data-sort="status">Durum</button>
+                  <th class="col-state">
+                    <button type="button" class="th-sort" data-sort="status" data-i18n="colStatus">State</button>
                   </th>
-                  <th>
-                    <button type="button" class="th-sort-btn" data-sort="subject">Mail Adı (Konu) / Gönderen</button>
+                  <th class="col-msg">
+                    <button type="button" class="th-sort" data-sort="subject" data-i18n="colSubjectAuthor">Message</button>
                   </th>
-                  <th>Hesap / Klasör</th>
-                  <th>
-                    <button type="button" class="th-sort-btn" data-sort="receivedAt">Geliş Tarihi</button>
+                  <th class="col-loc" data-i18n="colAccountFolder">Location</th>
+                  <th class="col-date">
+                    <button type="button" class="th-sort" data-sort="receivedAt" data-i18n="colReceivedDate">Received</button>
                   </th>
-                  <th>
-                    <button type="button" class="th-sort-btn" data-sort="deletedAt">Silinme Tarihi</button>
+                  <th class="col-date">
+                    <button type="button" class="th-sort" data-sort="deletedAt" data-i18n="colDeletedDate">Deleted</button>
                   </th>
-                  <th class="actions-col">İşlemler</th>
+                  <th class="col-act" data-i18n="colActions">Actions</th>
                 </tr>
               </thead>
               <tbody id="records-tbody"></tbody>
             </table>
-          </div>
 
-          <div id="empty-state" class="empty-state hidden">
-            <h3>Kayıt bulunamadı</h3>
-            <p id="empty-state-message"></p>
-          </div>
-
-          <footer class="pagination-bar">
-            <span id="pagination-summary" class="pagination-summary">0 kayıt</span>
-            <div class="pagination-controls">
-              <button id="btn-prev-page" type="button" class="btn btn-secondary btn-sm">Önceki</button>
-              <span id="pagination-page" class="page-indicator">Sayfa 1 / 1</span>
-              <button id="btn-next-page" type="button" class="btn btn-secondary btn-sm">Sonraki</button>
+            <div id="empty-state" class="empty-view hidden">
+              <h2 data-i18n="emptyTitle">No entries</h2>
+              <p id="empty-state-message"></p>
             </div>
-          </footer>
+          </div>
+
+          <!-- DOCKED RIGHT INSPECTOR PANE -->
+          <aside id="detail-drawer" class="inspector hidden" aria-label="Inspector">
+            <header class="inspector-header">
+              <span class="inspector-kicker" data-i18n="drawerKicker">Inspector</span>
+              <button id="btn-drawer-close" type="button" class="icon-close" data-i18n-aria-label="btnClose" aria-label="Close">
+                <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+                  <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                </svg>
+              </button>
+            </header>
+            <div class="inspector-title-block">
+              <h2 id="drawer-subject">—</h2>
+              <div id="drawer-status-line" class="inspector-state"></div>
+            </div>
+            <div id="drawer-body" class="inspector-body"></div>
+            <footer id="drawer-footer" class="inspector-footer"></footer>
+          </aside>
+        </div>
+
+        <footer class="statusbar">
+          <span id="pagination-summary" class="status-text">0 entries</span>
+          <div class="pager">
+            <button id="btn-prev-page" type="button" class="btn btn-ghost btn-xs" data-i18n="btnPrev">Prev</button>
+            <span id="pagination-page" class="pager-num">1 / 1</span>
+            <button id="btn-next-page" type="button" class="btn btn-ghost btn-xs" data-i18n="btnNext">Next</button>
+          </div>
+        </footer>
+      </section>
+
+      <!-- VIEW: ACTIVITY / STATS -->
+      <section id="view-stats" class="pane-body scroll-pane hidden">
+        <div class="content-container">
+          <div class="section-block">
+            <div class="section-head">
+              <h2 data-i18n="statsDailyTitle">Deletions — Last 14 Days</h2>
+              <p data-i18n="statsDailyDesc">Messages moved to Trash or permanently purged each day.</p>
+            </div>
+            <div id="daily-chart" class="chart-bars" aria-label="Last 14 days"></div>
+          </div>
+
+          <div class="two-col-sections">
+            <div class="section-block">
+              <h2 data-i18n="statsAccountTitle">Accounts</h2>
+              <div id="account-stats-list" class="breakdown-list"></div>
+            </div>
+
+            <div class="section-block">
+              <h2 data-i18n="statsFoldersTitle">Top Deleted Folders</h2>
+              <div id="folder-stats-list" class="breakdown-list"></div>
+            </div>
+          </div>
         </div>
       </section>
 
-      <!-- VIEW: STATS -->
-      <section id="view-stats" class="view-section hidden">
-        <div class="stats-grid">
-          <article class="panel-card full-span">
-            <h3>Son 14 Gün Silme Aktivitesi</h3>
-            <p class="card-desc">Günlük olarak Çöp Kutusu'na atılan veya kalıcı silinen mail sayısı.</p>
-            <div id="daily-chart" class="bar-chart" aria-label="Son 14 gün grafiği"></div>
-          </article>
+      <!-- VIEW: INDEX & BACKUP -->
+      <section id="view-tools" class="pane-body scroll-pane hidden">
+        <div class="content-container narrow">
+          <div class="section-block">
+            <div class="section-head">
+              <h2 data-i18n="toolsScanTitle">Backfill Existing Folders</h2>
+              <p data-i18n="toolsScanDesc">
+                New incoming and deleted messages are recorded automatically. Run a manual pass to index existing Inbox or Trash folders.
+              </p>
+            </div>
 
-          <article class="panel-card">
-            <h3>Hesaplara Göre Dağılım</h3>
-            <div id="account-stats-list" class="stats-list"></div>
-          </article>
-
-          <article class="panel-card">
-            <h3>En Çok Mail Silinen Klasörler</h3>
-            <div id="folder-stats-list" class="stats-list"></div>
-          </article>
-        </div>
-      </section>
-
-      <!-- VIEW: TOOLS (SCAN & BACKUP) -->
-      <section id="view-tools" class="view-section hidden">
-        <div class="tools-grid">
-          <article class="panel-card">
-            <h3>Mevcut Mailleri İndeksle</h3>
-            <p class="card-desc">
-              Eklenti kurulduktan sonra gelen ve silinen tüm mailler zaten otomatik kaydedilir.
-              Önceki mailleri de günlüğe eklemek için aşağıdaki taramaları çalıştırabilirsiniz.
-            </p>
-            <label class="inline-field tool-select-row">
-              <span>Klasör başına en fazla</span>
-              <select id="scan-limit-select">
-                <option value="250">250 mail</option>
-                <option value="500" selected>500 mail</option>
-                <option value="1000">1.000 mail</option>
+            <div class="inline-setting">
+              <label for="scan-limit-select" data-i18n="toolsScanLimitLabel">Per-folder cap</label>
+              <select id="scan-limit-select" class="compact-select">
+                <option value="250" data-i18n="toolsScanLimit250">250 newest</option>
+                <option value="500" selected data-i18n="toolsScanLimit500">500 newest</option>
+                <option value="1000" data-i18n="toolsScanLimit1000">1,000 newest</option>
               </select>
-            </label>
-            <div class="tool-btn-row">
-              <button id="btn-scan-inboxes" type="button" class="btn btn-primary">
-                Gelen Kutularını Tara
-              </button>
-              <button id="btn-scan-trash" type="button" class="btn btn-secondary">
-                Çöp Kutularını Tara
-              </button>
             </div>
-            <p class="card-note">
-              Not: Çöp Kutusu taraması, eklenti kurulmadan önce silinmiş mailler için sahte tarih üretmez;
-              silinme tarihi alanında <strong>Kurulum öncesi</strong> bilgisi gösterir.
-            </p>
-          </article>
 
-          <article class="panel-card">
-            <h3>Dışa Aktarım ve Yedekleme</h3>
-            <p class="card-desc">
-              Tüm günlüğü Excel uyumlu CSV veya geri yüklenebilir JSON yedeği olarak indirebilir,
-              başka bir bilgisayardaki JSON yedeğini mevcut kayıtlarla birleştirebilirsiniz.
-            </p>
-            <div class="tool-btn-row">
-              <button id="btn-tools-csv-all" type="button" class="btn btn-secondary">
-                Tümünü CSV İndir
+            <div class="action-row">
+              <button id="btn-scan-inboxes" type="button" class="btn btn-primary" data-i18n="btnQuickScan">
+                Index Inboxes
               </button>
-              <button id="btn-tools-json-all" type="button" class="btn btn-secondary">
-                JSON Yedek İndir
+              <button id="btn-scan-trash" type="button" class="btn btn-subtle" data-i18n="btnScanTrash">
+                Index Trash
               </button>
             </div>
 
-            <div class="import-box">
-              <label for="json-import-input" class="import-label">
-                <strong>JSON Yedekten İçe Aktar (Birleştir)</strong>
-                <span>Mevcut silinme tarihlerini bozmadan eksik kayıtları ekler.</span>
-              </label>
+            <p class="footnote" data-i18n="toolsScanNote">
+              Trash indexing never fabricates timestamps for messages deleted prior to installation; those rows display "Pre-install".
+            </p>
+          </div>
+
+          <div class="section-block">
+            <div class="section-head">
+              <h2 data-i18n="toolsBackupTitle">Export &amp; Restore Backup</h2>
+              <p data-i18n="toolsBackupDesc">
+                Export the ledger as UTF-8 BOM CSV for spreadsheets, save a complete JSON backup, or merge an exported JSON file into this profile.
+              </p>
+            </div>
+
+            <div class="action-row">
+              <button id="btn-tools-csv-all" type="button" class="btn btn-subtle" data-i18n="btnExportCsvAll">
+                Export All CSV
+              </button>
+              <button id="btn-tools-json-all" type="button" class="btn btn-subtle" data-i18n="btnExportJsonAll">
+                Export JSON Backup
+              </button>
+            </div>
+
+            <div class="import-row">
+              <div>
+                <strong data-i18n="toolsImportTitle">Merge JSON Backup</strong>
+                <span data-i18n="toolsImportDesc">Adds missing entries while keeping existing deletion timestamps intact.</span>
+              </div>
               <input id="json-import-input" type="file" accept=".json,application/json" />
             </div>
-          </article>
+          </div>
         </div>
       </section>
 
       <!-- VIEW: SETTINGS -->
-      <section id="view-settings" class="view-section hidden">
-        <form id="settings-form" class="panel-card settings-card">
-          <h3>İzleme ve Görünüm Ayarları</h3>
+      <section id="view-settings" class="pane-body scroll-pane hidden">
+        <div class="content-container narrow">
+          <form id="settings-form" class="section-block">
+            <h2 class="settings-group" data-i18n="settingsTrackingHeading">Event Tracking</h2>
 
-          <label class="toggle-row">
-            <div>
-              <strong>Yeni gelen mailleri otomatik kaydet</strong>
-              <span>Tüm klasörlere yeni ulaşan maillerin konu, gönderen ve geliş tarihini kaydeder.</span>
-            </div>
-            <input id="set-track-incoming" type="checkbox" />
-          </label>
-
-          <label class="toggle-row">
-            <div>
-              <strong>Çöp Kutusu'na taşınan mailleri kaydet</strong>
-              <span>Eski veya yeni bir maili sildiğinizde silinme anını ve geldiği klasörü kaydeder.</span>
-            </div>
-            <input id="set-track-trash" type="checkbox" />
-          </label>
-
-          <label class="toggle-row">
-            <div>
-              <strong>Kalıcı silinen mailleri kaydet</strong>
-              <span>Çöp Kutusu boşaltıldığında veya Shift+Delete yapıldığında kalıcı silinme zamanını kaydeder.</span>
-            </div>
-            <input id="set-track-permanent" type="checkbox" />
-          </label>
-
-          <label class="toggle-row">
-            <div>
-              <strong>Araç çubuğu rozet sayacını göster</strong>
-              <span>Üst araç çubuğundaki simgede Çöp Kutusu'ndaki kayıt sayısını rozet olarak gösterir.</span>
-            </div>
-            <input id="set-show-badge" type="checkbox" />
-          </label>
-
-          <div class="field-row">
-            <label for="set-max-records">
-              <strong>Maksimum kayıt limiti</strong>
-              <span>Limit aşıldığında önce en eski aktif mailler temizlenir; silinen kayıtlar öncelikli korunur.</span>
+            <label class="pref-row">
+              <div class="pref-copy">
+                <strong data-i18n="optTrackIncomingTitle">Record incoming messages</strong>
+                <span data-i18n="optTrackIncomingDesc">Log subject, sender, and received date as new mail arrives.</span>
+              </div>
+              <input id="set-track-incoming" type="checkbox" class="switch" />
             </label>
-            <select id="set-max-records">
-              <option value="5000">5.000 kayıt</option>
-              <option value="10000">10.000 kayıt</option>
-              <option value="25000">25.000 kayıt (Varsayılan)</option>
-              <option value="50000">50.000 kayıt</option>
-              <option value="100000">100.000 kayıt</option>
-            </select>
-          </div>
 
-          <div class="field-row">
-            <label for="set-theme">
-              <strong>Tema tercihi</strong>
-              <span>Popup, tam arayüz ve seçenekler ekranında uygulanır.</span>
+            <label class="pref-row">
+              <div class="pref-copy">
+                <strong data-i18n="optTrackTrashTitle">Record moves to Trash</strong>
+                <span data-i18n="optTrackTrashDesc">Capture exact deletion time and source folder for both new and older mail.</span>
+              </div>
+              <input id="set-track-trash" type="checkbox" class="switch" />
             </label>
-            <select id="set-theme">
-              <option value="system">Sistem Teması (Otomatik)</option>
-              <option value="light">Açık Tema</option>
-              <option value="dark">Koyu Tema</option>
-            </select>
-          </div>
 
-          <div class="settings-actions">
-            <button type="submit" class="btn btn-primary">Ayarları Kaydet</button>
-          </div>
-        </form>
+            <label class="pref-row">
+              <div class="pref-copy">
+                <strong data-i18n="optTrackPermanentTitle">Record permanent deletions</strong>
+                <span data-i18n="optTrackPermanentDesc">Log permanent purge timestamps when emptying Trash or using Shift+Delete.</span>
+              </div>
+              <input id="set-track-permanent" type="checkbox" class="switch" />
+            </label>
 
-        <article class="panel-card danger-card">
-          <h3>Günlük Temizleme</h3>
-          <p class="card-desc">
-            Bu işlemler yalnızca eklentinin yerel kayıt defterini temizler; Thunderbird veya Gmail'deki gerçek maillerinize dokunmaz.
-          </p>
-          <div class="tool-btn-row">
-            <button id="btn-clear-trigger" type="button" class="btn btn-danger-outline">
-              Temizleme Seçeneklerini Göster
-            </button>
-          </div>
-          <div id="clear-confirm-bar" class="confirm-bar hidden" role="region" aria-label="Temizleme onayı">
-            <span class="confirm-text">Hangi günlük kayıtlarını silmek istiyorsunuz?</span>
-            <div class="confirm-actions">
-              <button id="btn-clear-active" type="button" class="btn btn-secondary btn-sm">
-                Sadece Aktifleri Temizle
-              </button>
-              <button id="btn-clear-all" type="button" class="btn btn-danger btn-sm">
-                Tüm Günlüğü Sıfırla
-              </button>
-              <button id="btn-clear-cancel" type="button" class="btn btn-ghost btn-sm">
-                Vazgeç
+            <label class="pref-row">
+              <div class="pref-copy">
+                <strong data-i18n="optShowBadgeTitle">Toolbar badge counter</strong>
+                <span data-i18n="optShowBadgeDesc">Display the number of logged Trash items on the toolbar icon.</span>
+              </div>
+              <input id="set-show-badge" type="checkbox" class="switch" />
+            </label>
+
+            <h2 class="settings-group" data-i18n="settingsInterfaceHeading">Appearance &amp; Storage</h2>
+
+            <div class="pref-row">
+              <label class="pref-copy" for="set-language">
+                <strong data-i18n="optLanguageTitle">Language</strong>
+                <span data-i18n="optLanguageDesc">Follows Thunderbird's interface language automatically (English default, Turkish supported).</span>
+              </label>
+              <select id="set-language" class="compact-select wide-select">
+                <option value="auto" data-i18n="optLangAuto">Auto (Thunderbird)</option>
+                <option value="en" data-i18n="optLangEn">English</option>
+                <option value="tr" data-i18n="optLangTr">Türkçe</option>
+              </select>
+            </div>
+
+            <div class="pref-row">
+              <label class="pref-copy" for="set-max-records">
+                <strong data-i18n="optMaxRecordsTitle">Retention cap</strong>
+                <span data-i18n="optMaxRecordsDesc">Oldest active entries are pruned first; deletion history is prioritized.</span>
+              </label>
+              <select id="set-max-records" class="compact-select wide-select">
+                <option value="5000" data-i18n="optMax5000">5,000 entries</option>
+                <option value="10000" data-i18n="optMax10000">10,000 entries</option>
+                <option value="25000" data-i18n="optMax25000">25,000 entries (Default)</option>
+                <option value="50000" data-i18n="optMax50000">50,000 entries</option>
+                <option value="100000" data-i18n="optMax100000">100,000 entries</option>
+              </select>
+            </div>
+
+            <div class="pref-row">
+              <label class="pref-copy" for="set-theme">
+                <strong data-i18n="optThemeTitle">Theme</strong>
+                <span data-i18n="optThemeDesc">Applied across the popover, full workspace, and options sheet.</span>
+              </label>
+              <select id="set-theme" class="compact-select wide-select">
+                <option value="system" data-i18n="optThemeSystem">System (Auto)</option>
+                <option value="light" data-i18n="optThemeLight">Light</option>
+                <option value="dark" data-i18n="optThemeDark">Dark</option>
+              </select>
+            </div>
+
+            <div class="action-row">
+              <button type="submit" class="btn btn-primary" data-i18n="btnSaveSettings">Save Changes</button>
+            </div>
+          </form>
+
+          <div class="section-block">
+            <div class="section-head">
+              <h2 data-i18n="dangerCardTitle">Maintenance</h2>
+              <p data-i18n="dangerCardDesc">
+                Clearing only removes entries from MailLedger's local index. Actual emails in Thunderbird are never touched.
+              </p>
+            </div>
+
+            <div class="action-row">
+              <button id="btn-clear-trigger" type="button" class="btn btn-danger-ghost" data-i18n="btnShowClearOptions">
+                Clear Ledger...
               </button>
             </div>
+
+            <div id="clear-confirm-bar" class="confirm-strip hidden" role="region" aria-label="Clear confirmation">
+              <span data-i18n="clearConfirmPrompt">Select which local ledger entries to remove:</span>
+              <div class="action-row">
+                <button id="btn-clear-active" type="button" class="btn btn-subtle btn-sm" data-i18n="btnClearActive">Clear Active Only</button>
+                <button id="btn-clear-all" type="button" class="btn btn-danger btn-sm" data-i18n="btnClearAll">Reset Entire Ledger</button>
+                <button id="btn-clear-cancel" type="button" class="btn btn-ghost btn-sm" data-i18n="btnCancel">Cancel</button>
+              </div>
+            </div>
           </div>
-        </article>
+        </div>
       </section>
     </div>
   </div>
 
-  <!-- RIGHT SLIDE-OVER DETAIL DRAWER -->
-  <div id="drawer-backdrop" class="drawer-backdrop hidden"></div>
-  <aside id="detail-drawer" class="detail-drawer hidden" aria-label="Mail ayrıntıları">
-    <header class="drawer-header">
-      <div>
-        <span class="drawer-kicker">Kayıt Ayrıntısı</span>
-        <h3 id="drawer-subject">—</h3>
-      </div>
-      <button id="btn-drawer-close" type="button" class="btn btn-ghost btn-sm" aria-label="Kapat">
-        Kapat
-      </button>
-    </header>
-    <div id="drawer-body" class="drawer-body"></div>
-    <footer id="drawer-footer" class="drawer-footer"></footer>
-  </aside>
-
   <div id="toast-container" class="toast-container" aria-live="polite"></div>
 
+  <script src="../src/i18n.js"></script>
   <script src="../src/store.js"></script>
   <script src="../src/mailActions.js"></script>
   <script src="dashboard.js"></script>

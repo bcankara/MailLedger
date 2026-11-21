@@ -1,0 +1,798 @@
+{
+  "extensionName": {
+    "message": "MailLedger",
+    "description": "Eklenti marka adı"
+  },
+  "extensionDescription": {
+    "message": "Thunderbird için yerel e-posta kayıt defteri. Gelen maillerin geliş ve tam silinme tarihlerini masaüstü arayüzü, hızlı pencere, aktivite özeti ve tek tıkla geri yükleme ile takip eder.",
+    "description": "Manifest açıklaması"
+  },
+  "spaceTitle": {
+    "message": "MailLedger",
+    "description": "Alanlar araç çubuğu başlığı"
+  },
+  "brandTitle": {
+    "message": "MailLedger",
+    "description": "Sol menü marka başlığı"
+  },
+  "brandMeta": {
+    "message": "v1.2.0 · Yerel",
+    "description": "Sürüm ve yerel çalışma bilgisi"
+  },
+  "trackingActive": {
+    "message": "İzleme aktif",
+    "description": "İzleme açıkken durum metni"
+  },
+  "trackingPaused": {
+    "message": "İzleme duraklatıldı",
+    "description": "İzleme kapalıyken durum metni"
+  },
+  "navDeleted": {
+    "message": "Silinenler",
+    "description": "Silinen mailler sekmesi"
+  },
+  "navAll": {
+    "message": "Tüm Mailler",
+    "description": "Tüm mailler sekmesi"
+  },
+  "navStats": {
+    "message": "Aktivite",
+    "description": "İstatistikler sekmesi"
+  },
+  "navTools": {
+    "message": "Tarama & Yedek",
+    "description": "Tarama ve yedekleme sekmesi"
+  },
+  "navSettings": {
+    "message": "Ayarlar",
+    "description": "Ayarlar sekmesi"
+  },
+  "btnQuickScan": {
+    "message": "Gelen Kutularını Tara",
+    "description": "Hızlı gelen kutusu tarama düğmesi"
+  },
+  "btnScanTrash": {
+    "message": "Çöp Kutularını Tara",
+    "description": "Çöp kutusu tarama düğmesi"
+  },
+  "btnExportCsv": {
+    "message": "CSV",
+    "description": "CSV dışa aktarma"
+  },
+  "btnExportJson": {
+    "message": "JSON",
+    "description": "JSON yedekleme"
+  },
+  "btnExportCsvAll": {
+    "message": "Tümünü CSV İndir",
+    "description": "Tüm kayıtları CSV olarak indir"
+  },
+  "btnExportJsonAll": {
+    "message": "JSON Yedek İndir",
+    "description": "Tam JSON yedeğini indir"
+  },
+  "themeBtnSystem": {
+    "message": "Tema: Sistem",
+    "description": "Sistem teması"
+  },
+  "themeBtnLight": {
+    "message": "Tema: Açık",
+    "description": "Açık tema"
+  },
+  "themeBtnDark": {
+    "message": "Tema: Koyu",
+    "description": "Koyu tema"
+  },
+  "viewDeletedTitle": {
+    "message": "Silinen Mailler",
+    "description": "Silinen mailler başlığı"
+  },
+  "viewAllTitle": {
+    "message": "Tüm Mailler",
+    "description": "Tüm mailler başlığı"
+  },
+  "viewStatsTitle": {
+    "message": "Aktivite & Dağılım",
+    "description": "Aktivite görünüm başlığı"
+  },
+  "viewToolsTitle": {
+    "message": "Tarama & Yedekleme",
+    "description": "Tarama ve yedekleme başlığı"
+  },
+  "viewSettingsTitle": {
+    "message": "Ayarlar",
+    "description": "Ayarlar başlığı"
+  },
+  "kpiTotal": {
+    "message": "toplam",
+    "description": "Satır içi sayaç eki"
+  },
+  "kpiTrashed": {
+    "message": "çöp kutusu",
+    "description": "Satır içi sayaç eki"
+  },
+  "kpiDeleted": {
+    "message": "kalıcı",
+    "description": "Satır içi sayaç eki"
+  },
+  "kpiActive": {
+    "message": "aktif",
+    "description": "Satır içi sayaç eki"
+  },
+  "kpiToday": {
+    "message": "bugün silinen",
+    "description": "Satır içi sayaç eki"
+  },
+  "pillAll": {
+    "message": "Tümü",
+    "description": "Filtre segmenti"
+  },
+  "pillDeletedAny": {
+    "message": "Silinenler",
+    "description": "Filtre segmenti"
+  },
+  "pillTrashed": {
+    "message": "Çöp",
+    "description": "Filtre segmenti"
+  },
+  "pillDeleted": {
+    "message": "Kalıcı",
+    "description": "Filtre segmenti"
+  },
+  "pillActive": {
+    "message": "Aktif",
+    "description": "Filtre segmenti"
+  },
+  "searchPlaceholder": {
+    "message": "Konu, gönderen, klasör veya Message-ID filtrele...",
+    "description": "Arama alanı yer tutucu"
+  },
+  "allAccounts": {
+    "message": "Tüm hesaplar",
+    "description": "Hesap filtresi varsayılanı"
+  },
+  "sortDeletedDesc": {
+    "message": "Silinme · En Yeni",
+    "description": "Sıralama seçeneği"
+  },
+  "sortDeletedAsc": {
+    "message": "Silinme · En Eski",
+    "description": "Sıralama seçeneği"
+  },
+  "sortReceivedDesc": {
+    "message": "Geliş · En Yeni",
+    "description": "Sıralama seçeneği"
+  },
+  "sortReceivedAsc": {
+    "message": "Geliş · En Eski",
+    "description": "Sıralama seçeneği"
+  },
+  "sortActivityDesc": {
+    "message": "Hareket · En Son",
+    "description": "Sıralama seçeneği"
+  },
+  "sortSubjectAsc": {
+    "message": "Konu · A–Z",
+    "description": "Sıralama seçeneği"
+  },
+  "sortAuthorAsc": {
+    "message": "Gönderen · A–Z",
+    "description": "Sıralama seçeneği"
+  },
+  "dateFieldDeleted": {
+    "message": "Silinme tarihi",
+    "description": "Tarih alanı seçeneği"
+  },
+  "dateFieldReceived": {
+    "message": "Geliş tarihi",
+    "description": "Tarih alanı seçeneği"
+  },
+  "dateFromAria": {
+    "message": "Başlangıç tarihi",
+    "description": "Başlangıç tarihi aria etiketi"
+  },
+  "dateToAria": {
+    "message": "Bitiş tarihi",
+    "description": "Bitiş tarihi aria etiketi"
+  },
+  "btnResetFilters": {
+    "message": "Sıfırla",
+    "description": "Filtre sıfırlama düğmesi"
+  },
+  "bulkSelectedCount": {
+    "message": "$1 seçili",
+    "description": "Seçili satır sayısı"
+  },
+  "btnBulkRestore": {
+    "message": "Geri Yükle",
+    "description": "Toplu geri yükleme düğmesi"
+  },
+  "btnBulkCsv": {
+    "message": "CSV İndir",
+    "description": "Toplu CSV düğmesi"
+  },
+  "btnBulkRemove": {
+    "message": "Günlükten Sil",
+    "description": "Toplu silme düğmesi"
+  },
+  "btnBulkClear": {
+    "message": "Temizle",
+    "description": "Seçimi temizle düğmesi"
+  },
+  "selectAllAria": {
+    "message": "Sayfadaki tüm satırları seç",
+    "description": "Tümünü seç onay kutusu etiketi"
+  },
+  "colStatus": {
+    "message": "Durum",
+    "description": "Tablo sütunu"
+  },
+  "colSubjectAuthor": {
+    "message": "İleti",
+    "description": "Tablo sütunu"
+  },
+  "colAccountFolder": {
+    "message": "Konum",
+    "description": "Tablo sütunu"
+  },
+  "colReceivedDate": {
+    "message": "Geliş",
+    "description": "Tablo sütunu"
+  },
+  "colDeletedDate": {
+    "message": "Silinme",
+    "description": "Tablo sütunu"
+  },
+  "colActions": {
+    "message": "İşlem",
+    "description": "Tablo sütunu"
+  },
+  "emptyTitle": {
+    "message": "Kayıt yok",
+    "description": "Boş durum başlığı"
+  },
+  "emptyFiltered": {
+    "message": "Aktif arama, durum veya tarih aralığına uyan kayıt bulunamadı.",
+    "description": "Filtre boş mesajı"
+  },
+  "emptyInitial": {
+    "message": "Bundan sonra gelen ve silinen tüm mailler (eski mailler dahil) otomatik olarak burada görünür. Mevcut klasörleri eklemek için Tarama & Yedek bölümünü kullanabilirsiniz.",
+    "description": "Günlük boş mesajı"
+  },
+  "btnPrev": {
+    "message": "Önceki",
+    "description": "Önceki sayfa"
+  },
+  "btnNext": {
+    "message": "Sonraki",
+    "description": "Sonraki sayfa"
+  },
+  "paginationZero": {
+    "message": "0 kayıt",
+    "description": "Boş sayfalama"
+  },
+  "paginationRange": {
+    "message": "$1–$2 / $3",
+    "description": "Sayfalama aralığı"
+  },
+  "paginationPage": {
+    "message": "$1 / $2",
+    "description": "Sayfa göstergesi"
+  },
+  "statusTrashed": {
+    "message": "Çöp Kutusu",
+    "description": "Çöp durumu"
+  },
+  "statusDeleted": {
+    "message": "Kalıcı Silindi",
+    "description": "Kalıcı silindi durumu"
+  },
+  "statusActive": {
+    "message": "Aktif",
+    "description": "Aktif durumu"
+  },
+  "noSubject": {
+    "message": "(Konu yok)",
+    "description": "Konusuz mail"
+  },
+  "unknownSender": {
+    "message": "Bilinmeyen gönderen",
+    "description": "Bilinmeyen gönderen"
+  },
+  "unknownFolder": {
+    "message": "Bilinmeyen klasör",
+    "description": "Bilinmeyen klasör"
+  },
+  "preExistingTrash": {
+    "message": "Kurulum öncesi",
+    "description": "Kurulum öncesi çöp kutusu etiketi"
+  },
+  "folderTrashFallback": {
+    "message": "Çöp Kutusu",
+    "description": "Yedek çöp kutusu metni"
+  },
+  "folderFormerPrefix": {
+    "message": "Kaynak: $1",
+    "description": "Kalıcı silinen eski klasör"
+  },
+  "folderRemovedFromServer": {
+    "message": "Posta kutusundan silindi",
+    "description": "Kalıcı silinen klasör metni"
+  },
+  "subDatePermanent": {
+    "message": "Kalıcı $1",
+    "description": "Kalıcı silinme alt tarihi"
+  },
+  "subDateRestored": {
+    "message": "Geri alındı $1",
+    "description": "Geri alınma alt tarihi"
+  },
+  "btnOpen": {
+    "message": "Aç",
+    "description": "Satır aç düğmesi"
+  },
+  "btnRestore": {
+    "message": "Geri Yükle",
+    "description": "Satır geri yükle düğmesi"
+  },
+  "statsDailyTitle": {
+    "message": "Silme Aktivitesi — Son 14 Gün",
+    "description": "Grafik başlığı"
+  },
+  "statsDailyDesc": {
+    "message": "Günlük olarak Çöp Kutusu'na atılan veya kalıcı silinen mail sayısı.",
+    "description": "Grafik açıklaması"
+  },
+  "statsAccountTitle": {
+    "message": "Hesaplar",
+    "description": "Hesap istatistik başlığı"
+  },
+  "statsFoldersTitle": {
+    "message": "En Çok Silinen Klasörler",
+    "description": "Klasör istatistik başlığı"
+  },
+  "statsNoAccountData": {
+    "message": "Henüz hesap aktivitesi kaydedilmedi.",
+    "description": "Boş hesap istatistiği"
+  },
+  "statsNoFolderData": {
+    "message": "Henüz silinen klasör verisi yok.",
+    "description": "Boş klasör istatistiği"
+  },
+  "statsAccountRecords": {
+    "message": "$1 kayıt",
+    "description": "Hesap toplam kayıt"
+  },
+  "statsAccountBreakdown": {
+    "message": "$1 aktif · $2 çöp · $3 kalıcı",
+    "description": "Hesap dağılımı"
+  },
+  "statsFolderDeletedCount": {
+    "message": "$1 silinen",
+    "description": "Klasör silinen sayısı"
+  },
+  "toolsScanTitle": {
+    "message": "Mevcut Klasörleri İndeksle",
+    "description": "Tarama başlığı"
+  },
+  "toolsScanDesc": {
+    "message": "Yeni gelen ve silinen mailler otomatik kaydedilir. Önceki Gelen veya Çöp Kutusu maillerini eklemek için tarama çalıştırabilirsiniz.",
+    "description": "Tarama açıklaması"
+  },
+  "toolsScanLimitLabel": {
+    "message": "Klasör limiti",
+    "description": "Tarama limiti etiketi"
+  },
+  "toolsScanLimit250": {
+    "message": "En yeni 250",
+    "description": "Tarama limiti seçeneği"
+  },
+  "toolsScanLimit500": {
+    "message": "En yeni 500",
+    "description": "Tarama limiti seçeneği"
+  },
+  "toolsScanLimit1000": {
+    "message": "En yeni 1.000",
+    "description": "Tarama limiti seçeneği"
+  },
+  "toolsScanNote": {
+    "message": "Çöp Kutusu taraması, kurulumdan önce silinmiş mailler için sahte tarih üretmez; bu satırlar \"Kurulum öncesi\" olarak gösterilir.",
+    "description": "Çöp tarama notu"
+  },
+  "toolsBackupTitle": {
+    "message": "Dışa Aktarım & Yedekleme",
+    "description": "Yedekleme başlığı"
+  },
+  "toolsBackupDesc": {
+    "message": "Kayıtları Excel uyumlu UTF-8 BOM CSV olarak dışa aktarın, tam JSON yedeği alın veya önceki bir JSON yedeğini birleştirin.",
+    "description": "Yedekleme açıklaması"
+  },
+  "toolsImportTitle": {
+    "message": "JSON Yedeği Birleştir",
+    "description": "İçe aktarma başlığı"
+  },
+  "toolsImportDesc": {
+    "message": "Mevcut silinme tarihlerini bozmadan eksik kayıtları ekler.",
+    "description": "İçe aktarma açıklaması"
+  },
+  "settingsTrackingHeading": {
+    "message": "Olay İzleme",
+    "description": "Ayarlar grup başlığı"
+  },
+  "settingsInterfaceHeading": {
+    "message": "Görünüm & Saklama",
+    "description": "Ayarlar grup başlığı"
+  },
+  "optTrackIncomingTitle": {
+    "message": "Gelen mailleri kaydet",
+    "description": "Ayar etiketi"
+  },
+  "optTrackIncomingDesc": {
+    "message": "Yeni gelen her mailin konu, gönderen ve geliş tarihini kaydeder.",
+    "description": "Ayar açıklaması"
+  },
+  "optTrackTrashTitle": {
+    "message": "Çöp Kutusu'na silinenleri kaydet",
+    "description": "Ayar etiketi"
+  },
+  "optTrackTrashDesc": {
+    "message": "Eski veya yeni bir mail silindiğinde tam silinme anını ve kaynak klasörü kaydeder.",
+    "description": "Ayar açıklaması"
+  },
+  "optTrackPermanentTitle": {
+    "message": "Kalıcı silinenleri kaydet",
+    "description": "Ayar etiketi"
+  },
+  "optTrackPermanentDesc": {
+    "message": "Çöp Kutusu boşaltıldığında veya Shift+Delete yapıldığında kalıcı silinme zamanını kaydeder.",
+    "description": "Ayar açıklaması"
+  },
+  "optShowBadgeTitle": {
+    "message": "Araç çubuğu rozet sayacı",
+    "description": "Ayar etiketi"
+  },
+  "optShowBadgeDesc": {
+    "message": "Araç çubuğu simgesinde Çöp Kutusu'ndaki kayıt sayısını gösterir.",
+    "description": "Ayar açıklaması"
+  },
+  "optMaxRecordsTitle": {
+    "message": "Saklama limiti",
+    "description": "Ayar etiketi"
+  },
+  "optMaxRecordsDesc": {
+    "message": "Limit dolduğunda önce en eski aktif mailler temizlenir; silme geçmişi korunur.",
+    "description": "Ayar açıklaması"
+  },
+  "optMax5000": {
+    "message": "5.000 kayıt",
+    "description": "Limit seçeneği"
+  },
+  "optMax10000": {
+    "message": "10.000 kayıt",
+    "description": "Limit seçeneği"
+  },
+  "optMax25000": {
+    "message": "25.000 kayıt (Varsayılan)",
+    "description": "Limit seçeneği"
+  },
+  "optMax50000": {
+    "message": "50.000 kayıt",
+    "description": "Limit seçeneği"
+  },
+  "optMax100000": {
+    "message": "100.000 kayıt",
+    "description": "Limit seçeneği"
+  },
+  "optLanguageTitle": {
+    "message": "Dil",
+    "description": "Dil başlığı"
+  },
+  "optLanguageDesc": {
+    "message": "Thunderbird arayüz dilini otomatik izler (varsayılan İngilizce, Türkçe destekli).",
+    "description": "Dil açıklaması"
+  },
+  "optLangAuto": {
+    "message": "Otomatik (Thunderbird)",
+    "description": "Otomatik dil"
+  },
+  "optLangEn": {
+    "message": "English",
+    "description": "İngilizce"
+  },
+  "optLangTr": {
+    "message": "Türkçe",
+    "description": "Türkçe"
+  },
+  "optThemeTitle": {
+    "message": "Tema",
+    "description": "Tema başlığı"
+  },
+  "optThemeDesc": {
+    "message": "Açılır pencere, ana çalışma alanı ve seçeneklerde uygulanır.",
+    "description": "Tema açıklaması"
+  },
+  "optThemeSystem": {
+    "message": "Sistem (Otomatik)",
+    "description": "Sistem teması"
+  },
+  "optThemeLight": {
+    "message": "Açık",
+    "description": "Açık tema"
+  },
+  "optThemeDark": {
+    "message": "Koyu",
+    "description": "Koyu tema"
+  },
+  "btnSaveSettings": {
+    "message": "Değişiklikleri Kaydet",
+    "description": "Kaydet düğmesi"
+  },
+  "dangerCardTitle": {
+    "message": "Bakım",
+    "description": "Temizleme başlığı"
+  },
+  "dangerCardDesc": {
+    "message": "Temizleme yalnızca MailLedger'ın yerel kaydını siler. Thunderbird'deki gerçek maillerinize dokunmaz.",
+    "description": "Temizleme açıklaması"
+  },
+  "btnShowClearOptions": {
+    "message": "Günlüğü Temizle...",
+    "description": "Temizleme seçeneklerini aç"
+  },
+  "clearConfirmPrompt": {
+    "message": "Hangi yerel günlük kayıtları silinsin?",
+    "description": "Onay metni"
+  },
+  "btnClearActive": {
+    "message": "Sadece Aktifleri Temizle",
+    "description": "Aktifleri temizle"
+  },
+  "btnClearAll": {
+    "message": "Tüm Günlüğü Sıfırla",
+    "description": "Tümünü sıfırla"
+  },
+  "btnCancel": {
+    "message": "Vazgeç",
+    "description": "Vazgeç"
+  },
+  "drawerKicker": {
+    "message": "Ayrıntı",
+    "description": "İnceleme başlık etiketi"
+  },
+  "btnClose": {
+    "message": "Kapat",
+    "description": "Kapat"
+  },
+  "detailSender": {
+    "message": "Gönderen",
+    "description": "Ayrıntı etiketi"
+  },
+  "detailAccount": {
+    "message": "Hesap",
+    "description": "Ayrıntı etiketi"
+  },
+  "detailOrigFolder": {
+    "message": "Orijinal Klasör",
+    "description": "Ayrıntı etiketi"
+  },
+  "detailCurrFolder": {
+    "message": "Mevcut Klasör",
+    "description": "Ayrıntı etiketi"
+  },
+  "detailReceivedAt": {
+    "message": "Geliş",
+    "description": "Ayrıntı etiketi"
+  },
+  "detailDeletedAt": {
+    "message": "Silinme",
+    "description": "Ayrıntı etiketi"
+  },
+  "detailPermDeletedAt": {
+    "message": "Kalıcı Silinme",
+    "description": "Ayrıntı etiketi"
+  },
+  "detailRestoredAt": {
+    "message": "Geri Yüklenme",
+    "description": "Ayrıntı etiketi"
+  },
+  "detailRecordedAt": {
+    "message": "İlk Kayıt",
+    "description": "Ayrıntı etiketi"
+  },
+  "btnCopyMessageId": {
+    "message": "Kopyala",
+    "description": "Kopyala"
+  },
+  "btnOpenInThunderbird": {
+    "message": "İletiyi Aç",
+    "description": "İletiyi aç"
+  },
+  "btnRestoreOriginal": {
+    "message": "Geri Yükle",
+    "description": "Geri yükle"
+  },
+  "btnRemoveFromLog": {
+    "message": "Kaydı Sil",
+    "description": "Kaydı sil"
+  },
+  "popupStatSummary": {
+    "message": "$1 çöp · $2 bugün · $3 toplam",
+    "description": "Kısa sayaç satırı"
+  },
+  "popupSearchPlaceholder": {
+    "message": "Silinen maillerde filtrele...",
+    "description": "Popup arama"
+  },
+  "popupEmptyDefault": {
+    "message": "Henüz silinen mail kaydı yok. Sildiğiniz mailler burada silinme sırasına göre anında görünür.",
+    "description": "Popup boş mesaj"
+  },
+  "popupEmptySearch": {
+    "message": "Filtrenizle eşleşen silinen mail yok.",
+    "description": "Popup arama boş"
+  },
+  "popupReceivedPrefix": {
+    "message": "Geliş",
+    "description": "Kısa geliş etiketi"
+  },
+  "popupDeletedPrefix": {
+    "message": "Silinme",
+    "description": "Kısa silinme etiketi"
+  },
+  "btnOpenFullDashboard": {
+    "message": "MailLedger'ı Aç",
+    "description": "Ana arayüzü aç"
+  },
+  "optionsPageTitle": {
+    "message": "MailLedger Tercihleri",
+    "description": "Seçenekler başlığı"
+  },
+  "optionsPageSubtitle": {
+    "message": "İzleme, dil, kayıt limiti ve görünüm ayarlarını yapılandırın.",
+    "description": "Seçenekler alt başlığı"
+  },
+  "toastSaved": {
+    "message": "Ayarlar kaydedildi.",
+    "description": "Bildirim"
+  },
+  "toastRestored": {
+    "message": "Orijinal klasörüne geri yüklendi.",
+    "description": "Bildirim"
+  },
+  "toastRestoreFailed": {
+    "message": "Mail geri yüklenemedi.",
+    "description": "Bildirim"
+  },
+  "toastOpenFailed": {
+    "message": "Mail açılamadı.",
+    "description": "Bildirim"
+  },
+  "toastRemoved": {
+    "message": "Kayıt günlükten silindi.",
+    "description": "Bildirim"
+  },
+  "toastRemoveFailed": {
+    "message": "Kayıt silinemedi.",
+    "description": "Bildirim"
+  },
+  "toastBulkRestoredOk": {
+    "message": "$1 mail geri yüklendi.",
+    "description": "Bildirim"
+  },
+  "toastBulkRestoredPartial": {
+    "message": "$1 geri yüklendi, $2 bulunamadı.",
+    "description": "Bildirim"
+  },
+  "toastBulkRemoved": {
+    "message": "$1 kayıt silindi.",
+    "description": "Bildirim"
+  },
+  "toastScanningInboxes": {
+    "message": "Gelen Kutuları taranıyor...",
+    "description": "Tarama metni"
+  },
+  "toastScanningTrash": {
+    "message": "Çöp Kutuları taranıyor...",
+    "description": "Tarama metni"
+  },
+  "toastScanningProgress": {
+    "message": "Taranıyor ($1/$2): $3 · $4",
+    "description": "Tarama ilerleme"
+  },
+  "toastScanDone": {
+    "message": "$1 klasörde $2 mail işlendi.",
+    "description": "Tarama bitti"
+  },
+  "toastScanFailed": {
+    "message": "Klasör taraması başarısız oldu.",
+    "description": "Tarama hatası"
+  },
+  "toastCsvExported": {
+    "message": "$1 kayıt CSV olarak indirildi.",
+    "description": "CSV bildirimi"
+  },
+  "toastJsonExported": {
+    "message": "$1 kayıt JSON yedeğine kaydedildi.",
+    "description": "JSON bildirimi"
+  },
+  "toastImportDone": {
+    "message": "Yedek birleştirildi: $1 eklendi, $2 güncellendi, $3 atlandı.",
+    "description": "İçe aktarma bildirimi"
+  },
+  "toastImportFailed": {
+    "message": "Geçersiz JSON yedek dosyası.",
+    "description": "İçe aktarma hatası"
+  },
+  "toastClearedActive": {
+    "message": "Aktif kayıtlar temizlendi; silme geçmişi korundu.",
+    "description": "Aktif temizleme"
+  },
+  "toastClearedAll": {
+    "message": "Günlük temizlendi.",
+    "description": "Tam temizleme"
+  },
+  "toastCopiedId": {
+    "message": "Message-ID kopyalandı.",
+    "description": "Kopyalandı"
+  },
+  "toastCopyFailed": {
+    "message": "Message-ID kopyalanamadı.",
+    "description": "Kopyalama hatası"
+  },
+  "toastLoadError": {
+    "message": "Kayıtlar yüklenemedi.",
+    "description": "Yükleme hatası"
+  },
+  "errMsgNotFound": {
+    "message": "Mail bulunamadı (kalıcı silinmiş veya taşınmış olabilir).",
+    "description": "Mail bulunamadı"
+  },
+  "errTrashMsgNotFound": {
+    "message": "Mail Çöp Kutusu'nda bulunamadı.",
+    "description": "Çöp kutusunda bulunamadı"
+  },
+  "errNoInboxFound": {
+    "message": "Hedef Gelen Kutusu klasörü bulunamadı.",
+    "description": "Gelen kutusu yok"
+  },
+  "csvHeaderStatus": {
+    "message": "Durum",
+    "description": "CSV sütun başlığı"
+  },
+  "csvHeaderSubject": {
+    "message": "Konu",
+    "description": "CSV sütun başlığı"
+  },
+  "csvHeaderSender": {
+    "message": "Gönderen",
+    "description": "CSV sütun başlığı"
+  },
+  "csvHeaderAccount": {
+    "message": "Hesap",
+    "description": "CSV sütun başlığı"
+  },
+  "csvHeaderReceived": {
+    "message": "Geliş Tarihi",
+    "description": "CSV sütun başlığı"
+  },
+  "csvHeaderDeleted": {
+    "message": "Silinme Tarihi",
+    "description": "CSV sütun başlığı"
+  },
+  "csvHeaderPermDeleted": {
+    "message": "Kalıcı Silinme Tarihi",
+    "description": "CSV sütun başlığı"
+  },
+  "csvHeaderOrigFolder": {
+    "message": "Orijinal Klasör",
+    "description": "CSV sütun başlığı"
+  },
+  "csvHeaderCurrFolder": {
+    "message": "Mevcut Klasör",
+    "description": "CSV sütun başlığı"
+  },
+  "csvHeaderMessageId": {
+    "message": "Message-ID",
+    "description": "CSV sütun başlığı"
+  }
+}

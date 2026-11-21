@@ -1,10 +1,10 @@
 {
-  "name": "thunderbird-mail-tarihce",
-  "version": "1.1.0",
-  "description": "Gelen maillerin adlarını, geliş tarihlerini ve silinme tarihlerini yerel olarak takip eden Thunderbird Manifest V3 eklentisi.",
+  "name": "mail-ledger",
+  "version": "1.2.0",
+  "description": "Local email deletion and audit ledger add-on for Mozilla Thunderbird (Manifest V3, English default + Turkish localization).",
   "license": "MIT",
   "scripts": {
-    "check": "node --check src/store.js && node --check src/mailActions.js && node --check src/background.js && node --check ui/popup.js && node --check ui/dashboard.js && node --check ui/options.js",
+    "check": "node --check src/i18n.js && node --check src/store.js && node --check src/mailActions.js && node --check src/background.js && node --check ui/popup.js && node --check ui/dashboard.js && node --check ui/options.js",
     "test": "node --test tests/*.test.js",
     "build": "python scripts/build_xpi.py"
   }

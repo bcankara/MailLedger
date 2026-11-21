@@ -362,7 +362,7 @@ describe("background event handler integration", () => {
 
   it("handles openDashboard message with view hint and falls back to tabs.create", async () => {
     const mock = createMockMessenger({
-      existingSpaces: [{ id: 7, name: "mail_tarihce_gunlugu", isSelfOwned: true }]
+      existingSpaces: [{ id: 7, name: "mail_ledger_space", isSelfOwned: true }]
     });
     globalThis.messenger = mock;
 

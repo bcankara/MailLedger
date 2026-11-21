@@ -1,92 +1,109 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mail Tarihçe Günlüğü — Seçenekler</title>
+  <title data-i18n="optionsPageTitle">MailLedger Preferences</title>
   <link rel="stylesheet" href="options.css" />
 </head>
 <body>
-  <div class="options-shell">
-    <header class="options-header">
-      <div class="options-brand">
-        <img src="../icons/icon.svg" alt="" width="28" height="28" />
+  <div class="prefs-shell">
+    <header class="prefs-header">
+      <div class="prefs-brand">
+        <img src="../icons/icon.svg" alt="" width="24" height="24" />
         <div>
-          <h1>Mail Tarihçe Günlüğü Ayarları</h1>
-          <p>İzleme davranışını, kayıt limitini ve arayüz temasını özelleştirin.</p>
+          <h1 data-i18n="optionsPageTitle">MailLedger Preferences</h1>
+          <p data-i18n="optionsPageSubtitle">Configure tracking, language, retention cap, and appearance.</p>
         </div>
       </div>
-      <button id="opt-open-dashboard" type="button" class="btn btn-primary">
-        Tam Arayüzü Aç
+      <button id="opt-open-dashboard" type="button" class="btn btn-secondary" data-i18n="btnOpenFullDashboard">
+        Open MailLedger
       </button>
     </header>
 
-    <form id="options-form" class="options-card">
-      <label class="toggle-row">
-        <div>
-          <strong>Yeni gelen mailleri otomatik kaydet</strong>
-          <span>Gelen tüm klasörlerde yeni maillerin adını ve geliş tarihini kaydeder.</span>
+    <form id="options-form" class="prefs-list">
+      <h2 class="group-heading" data-i18n="settingsTrackingHeading">Event Tracking</h2>
+
+      <label class="pref-row">
+        <div class="pref-copy">
+          <strong data-i18n="optTrackIncomingTitle">Record incoming messages</strong>
+          <span data-i18n="optTrackIncomingDesc">Log subject, sender, and received date as new mail arrives.</span>
         </div>
-        <input id="opt-track-incoming" type="checkbox" />
+        <input id="opt-track-incoming" type="checkbox" class="switch" />
       </label>
 
-      <label class="toggle-row">
-        <div>
-          <strong>Çöp Kutusu'na silinen mailleri kaydet</strong>
-          <span>Eski veya yeni bir mail Çöp Kutusu'na taşındığında silinme tarihini işler.</span>
+      <label class="pref-row">
+        <div class="pref-copy">
+          <strong data-i18n="optTrackTrashTitle">Record moves to Trash</strong>
+          <span data-i18n="optTrackTrashDesc">Capture exact deletion time and source folder for both new and older mail.</span>
         </div>
-        <input id="opt-track-trash" type="checkbox" />
+        <input id="opt-track-trash" type="checkbox" class="switch" />
       </label>
 
-      <label class="toggle-row">
-        <div>
-          <strong>Kalıcı silinen mailleri kaydet</strong>
-          <span>Çöp Kutusu boşaltıldığında veya Shift+Delete yapıldığında kalıcı silinme tarihini kaydeder.</span>
+      <label class="pref-row">
+        <div class="pref-copy">
+          <strong data-i18n="optTrackPermanentTitle">Record permanent deletions</strong>
+          <span data-i18n="optTrackPermanentDesc">Log permanent purge timestamps when emptying Trash or using Shift+Delete.</span>
         </div>
-        <input id="opt-track-permanent" type="checkbox" />
+        <input id="opt-track-permanent" type="checkbox" class="switch" />
       </label>
 
-      <label class="toggle-row">
-        <div>
-          <strong>Araç çubuğu rozet sayacını göster</strong>
-          <span>Eklenti simgesinde Çöp Kutusu'ndaki kayıt sayısını gösterir.</span>
+      <label class="pref-row">
+        <div class="pref-copy">
+          <strong data-i18n="optShowBadgeTitle">Toolbar badge counter</strong>
+          <span data-i18n="optShowBadgeDesc">Display the number of logged Trash items on the toolbar icon.</span>
         </div>
-        <input id="opt-show-badge" type="checkbox" />
+        <input id="opt-show-badge" type="checkbox" class="switch" />
       </label>
 
-      <div class="field-row">
-        <label for="opt-max-records">
-          <strong>Maksimum kayıt limiti</strong>
-          <span>Limit dolduğunda en eski aktif mailler önce temizlenir; silinen kayıtlar korunur.</span>
+      <h2 class="group-heading" data-i18n="settingsInterfaceHeading">Appearance &amp; Storage</h2>
+
+      <div class="pref-row">
+        <label class="pref-copy" for="opt-language">
+          <strong data-i18n="optLanguageTitle">Language</strong>
+          <span data-i18n="optLanguageDesc">Follows Thunderbird's interface language automatically (English default, Turkish supported).</span>
         </label>
-        <select id="opt-max-records">
-          <option value="5000">5.000 kayıt</option>
-          <option value="10000">10.000 kayıt</option>
-          <option value="25000">25.000 kayıt (Varsayılan)</option>
-          <option value="50000">50.000 kayıt</option>
-          <option value="100000">100.000 kayıt</option>
+        <select id="opt-language" class="select-input">
+          <option value="auto" data-i18n="optLangAuto">Auto (Thunderbird)</option>
+          <option value="en" data-i18n="optLangEn">English</option>
+          <option value="tr" data-i18n="optLangTr">Türkçe</option>
         </select>
       </div>
 
-      <div class="field-row">
-        <label for="opt-theme">
-          <strong>Arayüz teması</strong>
-          <span>Popup ve tam panelin görünümünü belirler.</span>
+      <div class="pref-row">
+        <label class="pref-copy" for="opt-max-records">
+          <strong data-i18n="optMaxRecordsTitle">Retention cap</strong>
+          <span data-i18n="optMaxRecordsDesc">Oldest active entries are pruned first; deletion history is prioritized.</span>
         </label>
-        <select id="opt-theme">
-          <option value="system">Sistem Teması (Otomatik)</option>
-          <option value="light">Açık Tema</option>
-          <option value="dark">Koyu Tema</option>
+        <select id="opt-max-records" class="select-input">
+          <option value="5000" data-i18n="optMax5000">5,000 entries</option>
+          <option value="10000" data-i18n="optMax10000">10,000 entries</option>
+          <option value="25000" data-i18n="optMax25000">25,000 entries (Default)</option>
+          <option value="50000" data-i18n="optMax50000">50,000 entries</option>
+          <option value="100000" data-i18n="optMax100000">100,000 entries</option>
         </select>
       </div>
 
-      <div class="options-footer">
+      <div class="pref-row">
+        <label class="pref-copy" for="opt-theme">
+          <strong data-i18n="optThemeTitle">Theme</strong>
+          <span data-i18n="optThemeDesc">Applied across the popover, full workspace, and options sheet.</span>
+        </label>
+        <select id="opt-theme" class="select-input">
+          <option value="system" data-i18n="optThemeSystem">System (Auto)</option>
+          <option value="light" data-i18n="optThemeLight">Light</option>
+          <option value="dark" data-i18n="optThemeDark">Dark</option>
+        </select>
+      </div>
+
+      <div class="prefs-footer">
         <span id="opt-status" class="save-status" aria-live="polite"></span>
-        <button type="submit" class="btn btn-primary">Ayarları Kaydet</button>
+        <button type="submit" class="btn btn-primary" data-i18n="btnSaveSettings">Save Changes</button>
       </div>
     </form>
   </div>
 
+  <script src="../src/i18n.js"></script>
   <script src="../src/store.js"></script>
   <script src="../src/mailActions.js"></script>
   <script src="options.js"></script>

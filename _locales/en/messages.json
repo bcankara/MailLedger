@@ -1,0 +1,798 @@
+{
+  "extensionName": {
+    "message": "MailLedger",
+    "description": "Extension brand name"
+  },
+  "extensionDescription": {
+    "message": "Local email audit ledger for Thunderbird. Tracks received dates and exact deletion timestamps with a native desktop workspace, quick popover, statistics, and one-click restore.",
+    "description": "Extension description in manifest"
+  },
+  "spaceTitle": {
+    "message": "MailLedger",
+    "description": "Title for the Spaces Toolbar button"
+  },
+  "brandTitle": {
+    "message": "MailLedger",
+    "description": "Sidebar brand title"
+  },
+  "brandMeta": {
+    "message": "v1.2.0 · Local",
+    "description": "Version and local-only badge"
+  },
+  "trackingActive": {
+    "message": "Tracking active",
+    "description": "Indicator text when tracking is enabled"
+  },
+  "trackingPaused": {
+    "message": "Tracking paused",
+    "description": "Indicator text when all tracking toggles are off"
+  },
+  "navDeleted": {
+    "message": "Deleted",
+    "description": "Sidebar navigation item for deleted emails"
+  },
+  "navAll": {
+    "message": "All Mail",
+    "description": "Sidebar navigation item for all logged emails"
+  },
+  "navStats": {
+    "message": "Activity",
+    "description": "Sidebar navigation item for statistics"
+  },
+  "navTools": {
+    "message": "Index & Backup",
+    "description": "Sidebar navigation item for scanning and backup tools"
+  },
+  "navSettings": {
+    "message": "Settings",
+    "description": "Sidebar navigation item for settings"
+  },
+  "btnQuickScan": {
+    "message": "Index Inboxes",
+    "description": "Quick inbox scan button"
+  },
+  "btnScanTrash": {
+    "message": "Index Trash",
+    "description": "Trash scan button"
+  },
+  "btnExportCsv": {
+    "message": "CSV",
+    "description": "Export filtered view as CSV"
+  },
+  "btnExportJson": {
+    "message": "JSON",
+    "description": "Export full log as JSON"
+  },
+  "btnExportCsvAll": {
+    "message": "Export All CSV",
+    "description": "Export all records as CSV"
+  },
+  "btnExportJsonAll": {
+    "message": "Export JSON Backup",
+    "description": "Download full JSON backup"
+  },
+  "themeBtnSystem": {
+    "message": "Theme: System",
+    "description": "Theme toggle button label for system theme"
+  },
+  "themeBtnLight": {
+    "message": "Theme: Light",
+    "description": "Theme toggle button label for light theme"
+  },
+  "themeBtnDark": {
+    "message": "Theme: Dark",
+    "description": "Theme toggle button label for dark theme"
+  },
+  "viewDeletedTitle": {
+    "message": "Deleted Mail",
+    "description": "Heading for deleted emails view"
+  },
+  "viewAllTitle": {
+    "message": "All Mail",
+    "description": "Heading for all emails view"
+  },
+  "viewStatsTitle": {
+    "message": "Activity & Breakdown",
+    "description": "Heading for statistics view"
+  },
+  "viewToolsTitle": {
+    "message": "Index & Backup",
+    "description": "Heading for scan and backup view"
+  },
+  "viewSettingsTitle": {
+    "message": "Settings",
+    "description": "Heading for settings view"
+  },
+  "kpiTotal": {
+    "message": "total",
+    "description": "Inline metric suffix"
+  },
+  "kpiTrashed": {
+    "message": "in trash",
+    "description": "Inline metric suffix"
+  },
+  "kpiDeleted": {
+    "message": "purged",
+    "description": "Inline metric suffix"
+  },
+  "kpiActive": {
+    "message": "active",
+    "description": "Inline metric suffix"
+  },
+  "kpiToday": {
+    "message": "deleted today",
+    "description": "Inline metric suffix"
+  },
+  "pillAll": {
+    "message": "All",
+    "description": "Filter segment"
+  },
+  "pillDeletedAny": {
+    "message": "Deleted",
+    "description": "Filter segment"
+  },
+  "pillTrashed": {
+    "message": "Trash",
+    "description": "Filter segment"
+  },
+  "pillDeleted": {
+    "message": "Purged",
+    "description": "Filter segment"
+  },
+  "pillActive": {
+    "message": "Active",
+    "description": "Filter segment"
+  },
+  "searchPlaceholder": {
+    "message": "Filter by subject, sender, folder, or Message-ID...",
+    "description": "Search input placeholder"
+  },
+  "allAccounts": {
+    "message": "All accounts",
+    "description": "Account filter default option"
+  },
+  "sortDeletedDesc": {
+    "message": "Deleted · Newest",
+    "description": "Sort option"
+  },
+  "sortDeletedAsc": {
+    "message": "Deleted · Oldest",
+    "description": "Sort option"
+  },
+  "sortReceivedDesc": {
+    "message": "Received · Newest",
+    "description": "Sort option"
+  },
+  "sortReceivedAsc": {
+    "message": "Received · Oldest",
+    "description": "Sort option"
+  },
+  "sortActivityDesc": {
+    "message": "Activity · Latest",
+    "description": "Sort option"
+  },
+  "sortSubjectAsc": {
+    "message": "Subject · A–Z",
+    "description": "Sort option"
+  },
+  "sortAuthorAsc": {
+    "message": "Sender · A–Z",
+    "description": "Sort option"
+  },
+  "dateFieldDeleted": {
+    "message": "Deleted date",
+    "description": "Date field option"
+  },
+  "dateFieldReceived": {
+    "message": "Received date",
+    "description": "Date field option"
+  },
+  "dateFromAria": {
+    "message": "Start date",
+    "description": "Start date input aria label"
+  },
+  "dateToAria": {
+    "message": "End date",
+    "description": "End date input aria label"
+  },
+  "btnResetFilters": {
+    "message": "Reset",
+    "description": "Reset filters button"
+  },
+  "bulkSelectedCount": {
+    "message": "$1 selected",
+    "description": "Count of selected rows"
+  },
+  "btnBulkRestore": {
+    "message": "Restore",
+    "description": "Bulk restore button"
+  },
+  "btnBulkCsv": {
+    "message": "Export CSV",
+    "description": "Bulk CSV button"
+  },
+  "btnBulkRemove": {
+    "message": "Remove from log",
+    "description": "Bulk remove button"
+  },
+  "btnBulkClear": {
+    "message": "Clear",
+    "description": "Clear selection button"
+  },
+  "selectAllAria": {
+    "message": "Select all rows on page",
+    "description": "Aria label for select-all checkbox"
+  },
+  "colStatus": {
+    "message": "State",
+    "description": "Table column"
+  },
+  "colSubjectAuthor": {
+    "message": "Message",
+    "description": "Table column"
+  },
+  "colAccountFolder": {
+    "message": "Location",
+    "description": "Table column"
+  },
+  "colReceivedDate": {
+    "message": "Received",
+    "description": "Table column"
+  },
+  "colDeletedDate": {
+    "message": "Deleted",
+    "description": "Table column"
+  },
+  "colActions": {
+    "message": "Actions",
+    "description": "Table column"
+  },
+  "emptyTitle": {
+    "message": "No entries",
+    "description": "Empty state heading"
+  },
+  "emptyFiltered": {
+    "message": "No entries match your active search, status, or date filters.",
+    "description": "Empty state message when filters return nothing"
+  },
+  "emptyInitial": {
+    "message": "Incoming mail and any emails you delete from now on (including old messages) will appear here automatically. You can also backfill existing folders from Index & Backup.",
+    "description": "Empty state message when log has zero records"
+  },
+  "btnPrev": {
+    "message": "Prev",
+    "description": "Pagination previous button"
+  },
+  "btnNext": {
+    "message": "Next",
+    "description": "Pagination next button"
+  },
+  "paginationZero": {
+    "message": "0 entries",
+    "description": "Pagination summary when empty"
+  },
+  "paginationRange": {
+    "message": "$1–$2 of $3",
+    "description": "Pagination range summary"
+  },
+  "paginationPage": {
+    "message": "$1 / $2",
+    "description": "Pagination current page label"
+  },
+  "statusTrashed": {
+    "message": "In Trash",
+    "description": "Status label for trashed email"
+  },
+  "statusDeleted": {
+    "message": "Purged",
+    "description": "Status label for permanently deleted email"
+  },
+  "statusActive": {
+    "message": "Active",
+    "description": "Status label for active email"
+  },
+  "noSubject": {
+    "message": "(No subject)",
+    "description": "Fallback when email has no subject"
+  },
+  "unknownSender": {
+    "message": "Unknown sender",
+    "description": "Fallback when email has no sender"
+  },
+  "unknownFolder": {
+    "message": "Unknown folder",
+    "description": "Fallback folder name"
+  },
+  "preExistingTrash": {
+    "message": "Pre-install",
+    "description": "Label for emails already in Trash before extension was installed"
+  },
+  "folderTrashFallback": {
+    "message": "Trash",
+    "description": "Fallback trash folder display"
+  },
+  "folderFormerPrefix": {
+    "message": "From $1",
+    "description": "Former folder display for permanently deleted emails"
+  },
+  "folderRemovedFromServer": {
+    "message": "Removed from mailbox",
+    "description": "Folder text when permanently deleted with unknown origin"
+  },
+  "subDatePermanent": {
+    "message": "Purged $1",
+    "description": "Subtext under deletion date when permanently deleted"
+  },
+  "subDateRestored": {
+    "message": "Restored $1",
+    "description": "Subtext when an email was restored"
+  },
+  "btnOpen": {
+    "message": "Open",
+    "description": "Row action button"
+  },
+  "btnRestore": {
+    "message": "Restore",
+    "description": "Row action button"
+  },
+  "statsDailyTitle": {
+    "message": "Deletions — Last 14 Days",
+    "description": "Stats chart title"
+  },
+  "statsDailyDesc": {
+    "message": "Messages moved to Trash or permanently purged each day.",
+    "description": "Stats chart description"
+  },
+  "statsAccountTitle": {
+    "message": "Accounts",
+    "description": "Stats section title"
+  },
+  "statsFoldersTitle": {
+    "message": "Top Deleted Folders",
+    "description": "Stats section title"
+  },
+  "statsNoAccountData": {
+    "message": "No account activity recorded yet.",
+    "description": "Empty stats message"
+  },
+  "statsNoFolderData": {
+    "message": "No deleted folder data yet.",
+    "description": "Empty stats message"
+  },
+  "statsAccountRecords": {
+    "message": "$1 entries",
+    "description": "Account total count"
+  },
+  "statsAccountBreakdown": {
+    "message": "$1 active · $2 trash · $3 purged",
+    "description": "Account status counts"
+  },
+  "statsFolderDeletedCount": {
+    "message": "$1 deleted",
+    "description": "Folder deleted count"
+  },
+  "toolsScanTitle": {
+    "message": "Backfill Existing Folders",
+    "description": "Tools section heading"
+  },
+  "toolsScanDesc": {
+    "message": "New incoming and deleted messages are recorded automatically. Run a manual pass to index existing Inbox or Trash folders.",
+    "description": "Tools section description"
+  },
+  "toolsScanLimitLabel": {
+    "message": "Per-folder cap",
+    "description": "Scan limit label"
+  },
+  "toolsScanLimit250": {
+    "message": "250 newest",
+    "description": "Scan limit option"
+  },
+  "toolsScanLimit500": {
+    "message": "500 newest",
+    "description": "Scan limit option"
+  },
+  "toolsScanLimit1000": {
+    "message": "1,000 newest",
+    "description": "Scan limit option"
+  },
+  "toolsScanNote": {
+    "message": "Trash indexing never fabricates timestamps for messages deleted prior to installation; those rows display \"Pre-install\".",
+    "description": "Trash scan note"
+  },
+  "toolsBackupTitle": {
+    "message": "Export & Restore Backup",
+    "description": "Backup section heading"
+  },
+  "toolsBackupDesc": {
+    "message": "Export the ledger as UTF-8 BOM CSV for spreadsheets, save a complete JSON backup, or merge an exported JSON file into this profile.",
+    "description": "Backup section description"
+  },
+  "toolsImportTitle": {
+    "message": "Merge JSON Backup",
+    "description": "Import section title"
+  },
+  "toolsImportDesc": {
+    "message": "Adds missing entries while keeping existing deletion timestamps intact.",
+    "description": "Import section description"
+  },
+  "settingsTrackingHeading": {
+    "message": "Event Tracking",
+    "description": "Settings group heading"
+  },
+  "settingsInterfaceHeading": {
+    "message": "Appearance & Storage",
+    "description": "Settings group heading"
+  },
+  "optTrackIncomingTitle": {
+    "message": "Record incoming messages",
+    "description": "Setting label"
+  },
+  "optTrackIncomingDesc": {
+    "message": "Log subject, sender, and received date as new mail arrives.",
+    "description": "Setting description"
+  },
+  "optTrackTrashTitle": {
+    "message": "Record moves to Trash",
+    "description": "Setting label"
+  },
+  "optTrackTrashDesc": {
+    "message": "Capture exact deletion time and source folder for both new and older mail.",
+    "description": "Setting description"
+  },
+  "optTrackPermanentTitle": {
+    "message": "Record permanent deletions",
+    "description": "Setting label"
+  },
+  "optTrackPermanentDesc": {
+    "message": "Log permanent purge timestamps when emptying Trash or using Shift+Delete.",
+    "description": "Setting description"
+  },
+  "optShowBadgeTitle": {
+    "message": "Toolbar badge counter",
+    "description": "Setting label"
+  },
+  "optShowBadgeDesc": {
+    "message": "Display the number of logged Trash items on the toolbar icon.",
+    "description": "Setting description"
+  },
+  "optMaxRecordsTitle": {
+    "message": "Retention cap",
+    "description": "Setting label"
+  },
+  "optMaxRecordsDesc": {
+    "message": "Oldest active entries are pruned first; deletion history is prioritized.",
+    "description": "Setting description"
+  },
+  "optMax5000": {
+    "message": "5,000 entries",
+    "description": "Max records option"
+  },
+  "optMax10000": {
+    "message": "10,000 entries",
+    "description": "Max records option"
+  },
+  "optMax25000": {
+    "message": "25,000 entries (Default)",
+    "description": "Max records option"
+  },
+  "optMax50000": {
+    "message": "50,000 entries",
+    "description": "Max records option"
+  },
+  "optMax100000": {
+    "message": "100,000 entries",
+    "description": "Max records option"
+  },
+  "optLanguageTitle": {
+    "message": "Language",
+    "description": "Language setting title"
+  },
+  "optLanguageDesc": {
+    "message": "Follows Thunderbird's interface language automatically (English default, Turkish supported).",
+    "description": "Language setting description"
+  },
+  "optLangAuto": {
+    "message": "Auto (Thunderbird)",
+    "description": "Auto language option"
+  },
+  "optLangEn": {
+    "message": "English",
+    "description": "English option"
+  },
+  "optLangTr": {
+    "message": "Türkçe",
+    "description": "Turkish option"
+  },
+  "optThemeTitle": {
+    "message": "Theme",
+    "description": "Theme setting title"
+  },
+  "optThemeDesc": {
+    "message": "Applied across the popover, full workspace, and options sheet.",
+    "description": "Theme setting description"
+  },
+  "optThemeSystem": {
+    "message": "System (Auto)",
+    "description": "Theme option"
+  },
+  "optThemeLight": {
+    "message": "Light",
+    "description": "Theme option"
+  },
+  "optThemeDark": {
+    "message": "Dark",
+    "description": "Theme option"
+  },
+  "btnSaveSettings": {
+    "message": "Save Changes",
+    "description": "Save settings button"
+  },
+  "dangerCardTitle": {
+    "message": "Maintenance",
+    "description": "Danger zone heading"
+  },
+  "dangerCardDesc": {
+    "message": "Clearing only removes entries from MailLedger's local index. Actual emails in Thunderbird are never touched.",
+    "description": "Danger zone description"
+  },
+  "btnShowClearOptions": {
+    "message": "Clear Ledger...",
+    "description": "Trigger clear confirmation bar"
+  },
+  "clearConfirmPrompt": {
+    "message": "Select which local ledger entries to remove:",
+    "description": "Inline confirm prompt"
+  },
+  "btnClearActive": {
+    "message": "Clear Active Only",
+    "description": "Clear active records button"
+  },
+  "btnClearAll": {
+    "message": "Reset Entire Ledger",
+    "description": "Clear all records button"
+  },
+  "btnCancel": {
+    "message": "Cancel",
+    "description": "Cancel button"
+  },
+  "drawerKicker": {
+    "message": "Inspector",
+    "description": "Inspector header kicker"
+  },
+  "btnClose": {
+    "message": "Close",
+    "description": "Close button"
+  },
+  "detailSender": {
+    "message": "Sender",
+    "description": "Detail label"
+  },
+  "detailAccount": {
+    "message": "Account",
+    "description": "Detail label"
+  },
+  "detailOrigFolder": {
+    "message": "Original Folder",
+    "description": "Detail label"
+  },
+  "detailCurrFolder": {
+    "message": "Current Folder",
+    "description": "Detail label"
+  },
+  "detailReceivedAt": {
+    "message": "Received",
+    "description": "Detail label"
+  },
+  "detailDeletedAt": {
+    "message": "Deleted",
+    "description": "Detail label"
+  },
+  "detailPermDeletedAt": {
+    "message": "Permanently Purged",
+    "description": "Detail label"
+  },
+  "detailRestoredAt": {
+    "message": "Restored",
+    "description": "Detail label"
+  },
+  "detailRecordedAt": {
+    "message": "First Indexed",
+    "description": "Detail label"
+  },
+  "btnCopyMessageId": {
+    "message": "Copy",
+    "description": "Copy button"
+  },
+  "btnOpenInThunderbird": {
+    "message": "Open Message",
+    "description": "Inspector open button"
+  },
+  "btnRestoreOriginal": {
+    "message": "Restore",
+    "description": "Inspector restore button"
+  },
+  "btnRemoveFromLog": {
+    "message": "Remove Entry",
+    "description": "Inspector remove button"
+  },
+  "popupStatSummary": {
+    "message": "$1 trash · $2 today · $3 total",
+    "description": "Compact popover metric line"
+  },
+  "popupSearchPlaceholder": {
+    "message": "Filter deleted messages...",
+    "description": "Popup search placeholder"
+  },
+  "popupEmptyDefault": {
+    "message": "No deleted mail recorded yet. Deleted messages appear here immediately sorted by deletion time.",
+    "description": "Popup empty text"
+  },
+  "popupEmptySearch": {
+    "message": "No deleted messages match your filter.",
+    "description": "Popup empty search text"
+  },
+  "popupReceivedPrefix": {
+    "message": "Recv",
+    "description": "Popup received short prefix"
+  },
+  "popupDeletedPrefix": {
+    "message": "Del",
+    "description": "Popup deleted short prefix"
+  },
+  "btnOpenFullDashboard": {
+    "message": "Open MailLedger",
+    "description": "Open dashboard button"
+  },
+  "optionsPageTitle": {
+    "message": "MailLedger Preferences",
+    "description": "Options page heading"
+  },
+  "optionsPageSubtitle": {
+    "message": "Configure tracking, language, retention cap, and appearance.",
+    "description": "Options page subtitle"
+  },
+  "toastSaved": {
+    "message": "Settings saved.",
+    "description": "Toast message"
+  },
+  "toastRestored": {
+    "message": "Restored to original folder.",
+    "description": "Toast message"
+  },
+  "toastRestoreFailed": {
+    "message": "Could not restore message.",
+    "description": "Toast message"
+  },
+  "toastOpenFailed": {
+    "message": "Could not open message.",
+    "description": "Toast message"
+  },
+  "toastRemoved": {
+    "message": "Entry removed from ledger.",
+    "description": "Toast message"
+  },
+  "toastRemoveFailed": {
+    "message": "Failed to remove entry.",
+    "description": "Toast message"
+  },
+  "toastBulkRestoredOk": {
+    "message": "Restored $1 messages.",
+    "description": "Toast message"
+  },
+  "toastBulkRestoredPartial": {
+    "message": "$1 restored, $2 not found.",
+    "description": "Toast message"
+  },
+  "toastBulkRemoved": {
+    "message": "Removed $1 entries.",
+    "description": "Toast message"
+  },
+  "toastScanningInboxes": {
+    "message": "Indexing Inbox folders...",
+    "description": "Scan status text"
+  },
+  "toastScanningTrash": {
+    "message": "Indexing Trash folders...",
+    "description": "Scan status text"
+  },
+  "toastScanningProgress": {
+    "message": "Indexing ($1/$2): $3 · $4",
+    "description": "Scan progress text"
+  },
+  "toastScanDone": {
+    "message": "Indexed $2 messages across $1 folder(s).",
+    "description": "Scan finished toast"
+  },
+  "toastScanFailed": {
+    "message": "Folder indexing failed.",
+    "description": "Scan failed toast"
+  },
+  "toastCsvExported": {
+    "message": "Exported $1 entries to CSV.",
+    "description": "CSV export toast"
+  },
+  "toastJsonExported": {
+    "message": "Saved $1 entries to JSON backup.",
+    "description": "JSON export toast"
+  },
+  "toastImportDone": {
+    "message": "Merged backup: $1 added, $2 updated, $3 skipped.",
+    "description": "JSON import summary toast"
+  },
+  "toastImportFailed": {
+    "message": "Invalid JSON backup file.",
+    "description": "JSON import error toast"
+  },
+  "toastClearedActive": {
+    "message": "Active entries cleared; deletion history kept.",
+    "description": "Clear active toast"
+  },
+  "toastClearedAll": {
+    "message": "Ledger cleared.",
+    "description": "Clear all toast"
+  },
+  "toastCopiedId": {
+    "message": "Message-ID copied.",
+    "description": "Clipboard success toast"
+  },
+  "toastCopyFailed": {
+    "message": "Could not copy Message-ID.",
+    "description": "Clipboard error toast"
+  },
+  "toastLoadError": {
+    "message": "Failed to load ledger.",
+    "description": "Load error toast"
+  },
+  "errMsgNotFound": {
+    "message": "Message not found (it may have been purged or moved).",
+    "description": "Error when message cannot be located"
+  },
+  "errTrashMsgNotFound": {
+    "message": "Message was not found in Trash.",
+    "description": "Error when trashed email cannot be located"
+  },
+  "errNoInboxFound": {
+    "message": "Target Inbox folder could not be found.",
+    "description": "Error when restore target folder is missing"
+  },
+  "csvHeaderStatus": {
+    "message": "Status",
+    "description": "CSV column header"
+  },
+  "csvHeaderSubject": {
+    "message": "Subject",
+    "description": "CSV column header"
+  },
+  "csvHeaderSender": {
+    "message": "Sender",
+    "description": "CSV column header"
+  },
+  "csvHeaderAccount": {
+    "message": "Account",
+    "description": "CSV column header"
+  },
+  "csvHeaderReceived": {
+    "message": "Received Date",
+    "description": "CSV column header"
+  },
+  "csvHeaderDeleted": {
+    "message": "Deletion Date",
+    "description": "CSV column header"
+  },
+  "csvHeaderPermDeleted": {
+    "message": "Permanent Deletion Date",
+    "description": "CSV column header"
+  },
+  "csvHeaderOrigFolder": {
+    "message": "Original Folder",
+    "description": "CSV column header"
+  },
+  "csvHeaderCurrFolder": {
+    "message": "Current Folder",
+    "description": "CSV column header"
+  },
+  "csvHeaderMessageId": {
+    "message": "Message-ID",
+    "description": "CSV column header"
+  }
+}

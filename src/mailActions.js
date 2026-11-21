@@ -98,14 +98,15 @@
    * Open a logged message in Thunderbird's messageDisplay tab.
    * @param {object} api
    * @param {object} record
-   * @returns {Promise<{ ok: boolean, error?: string }>}
+   * @returns {Promise<{ ok: boolean, errorCode?: string, error?: string }>}
    */
   async function openMessage(api, record) {
     const liveMsg = await findLiveMessage(api, record);
     if (!liveMsg) {
       return {
         ok: false,
-        error: "Mail bulunamadı (kalıcı olarak silinmiş veya taşınmış olabilir)."
+        errorCode: "NOT_FOUND",
+        error: "Message not found (it may have been purged or moved)."
       };
     }
     await api.messageDisplay.open({
@@ -120,14 +121,15 @@
    * @param {object} api
    * @param {object} Store
    * @param {object} record
-   * @returns {Promise<{ ok: boolean, targetFolderId?: string, error?: string }>}
+   * @returns {Promise<{ ok: boolean, targetFolderId?: string, errorCode?: string, error?: string }>}
    */
   async function restoreMessage(api, Store, record) {
     const liveMsg = await findLiveMessage(api, record);
     if (!liveMsg) {
       return {
         ok: false,
-        error: "Geri yüklenecek mail Çöp Kutusu'nda bulunamadı."
+        errorCode: "TRASH_NOT_FOUND",
+        error: "Message was not found in Trash."
       };
     }
 
@@ -135,7 +137,8 @@
     if (!targetFolderId) {
       return {
         ok: false,
-        error: "Hedef Gelen Kutusu klasörü bulunamadı."
+        errorCode: "NO_INBOX",
+        error: "Target Inbox folder could not be found."
       };
     }
 

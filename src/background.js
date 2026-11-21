@@ -1,7 +1,7 @@
 (function initMailAuditBackground(root) {
   "use strict";
 
-  const SPACE_NAME = "mail_tarihce_gunlugu";
+  const SPACE_NAME = "mail_ledger_space";
   const DASHBOARD_PATH = "ui/dashboard.html";
   const PENDING_VIEW_KEY = "mailAuditPendingView";
 
@@ -13,6 +13,18 @@
   }
 
   const storageManager = Store.createStorageManager(api.storage.local);
+
+  function getSpaceTitle() {
+    try {
+      const localized = api.i18n?.getMessage?.("spaceTitle");
+      if (localized) {
+        return localized;
+      }
+    } catch (_err) {
+      // Fallback below.
+    }
+    return "MailLedger";
+  }
 
   /**
    * Drain all paginated pages of a Thunderbird MessageList.
@@ -136,7 +148,7 @@
         }
       }
     } catch (err) {
-      console.error("[MailAudit] Hesap listesi alınamadı:", err);
+      console.error("[MailLedger] Failed to read accounts:", err);
     }
 
     try {
@@ -147,7 +159,7 @@
         }
       }
     } catch (err) {
-      console.error("[MailAudit] Çöp Kutusu klasörleri sorgulanamadı:", err);
+      console.error("[MailLedger] Failed to query trash folders:", err);
     }
 
     return { accountNames, trashFolderIds };
@@ -184,10 +196,10 @@
 
       await api.action.setBadgeText({ text });
       if (text && typeof api.action.setBadgeBackgroundColor === "function") {
-        await api.action.setBadgeBackgroundColor({ color: "#D97706" });
+        await api.action.setBadgeBackgroundColor({ color: "#C27803" });
       }
     } catch (err) {
-      console.error("[MailAudit] Araç çubuğu rozeti güncellenemedi:", err);
+      console.error("[MailLedger] Failed to update badge:", err);
     }
   }
 
@@ -213,7 +225,7 @@
       );
       await updateToolbarBadge();
     } catch (err) {
-      console.error("[MailAudit] Yeni mail kaydedilirken hata:", err);
+      console.error("[MailLedger] Error recording incoming mail:", err);
     }
   }
 
@@ -241,7 +253,7 @@
       );
       await updateToolbarBadge();
     } catch (err) {
-      console.error("[MailAudit] Taşıma/silme olayı işlenirken hata:", err);
+      console.error("[MailLedger] Error handling moved mail:", err);
     }
   }
 
@@ -267,7 +279,7 @@
       );
       await updateToolbarBadge();
     } catch (err) {
-      console.error("[MailAudit] Kalıcı silme olayı işlenirken hata:", err);
+      console.error("[MailLedger] Error handling deleted mail:", err);
     }
   }
 
@@ -277,6 +289,7 @@
     }
 
     const url = api.runtime.getURL(DASHBOARD_PATH);
+    const title = getSpaceTitle();
     const existing = await api.spaces.query({ isSelfOwned: true });
     const found = (existing || []).find((space) => space && space.name === SPACE_NAME);
     if (found) {
@@ -287,13 +300,13 @@
       return await api.spaces.create(
         SPACE_NAME,
         { url },
-        { title: "Mail Tarihçe", defaultIcons: "icons/icon.svg" }
+        { title, defaultIcons: "icons/icon.svg" }
       );
     } catch (_err) {
       return await api.spaces.create(
         SPACE_NAME,
         { url },
-        { title: "Mail Tarihçe" }
+        { title }
       );
     }
   }
@@ -320,7 +333,7 @@
         return;
       }
     } catch (err) {
-      console.error("[MailAudit] Alan açılırken hata, sekmeye geçiliyor:", err);
+      console.error("[MailLedger] Space open failed, falling back to tab:", err);
     }
 
     const tabs = await api.tabs.query({ url: `${baseUrl}*` });
@@ -353,7 +366,7 @@
       return;
     }
     if (changes[Store.STORAGE_KEY] || changes[Store.SETTINGS_KEY]) {
-      updateToolbarBadge().catch((err) => console.error("[MailAudit] Rozet hatası:", err));
+      updateToolbarBadge().catch((err) => console.error("[MailLedger] Badge error:", err));
     }
   }
 
@@ -364,7 +377,7 @@
 
   if (api.action?.onClicked?.addListener) {
     api.action.onClicked.addListener(() => {
-      openDashboard().catch((err) => console.error("[MailAudit] Panel açma hatası:", err));
+      openDashboard().catch((err) => console.error("[MailLedger] Open error:", err));
     });
   }
 
@@ -377,17 +390,17 @@
   }
 
   api.runtime.onInstalled.addListener(() => {
-    ensureSpace().catch((err) => console.error("[MailAudit] Alan kurulumu hatası:", err));
-    updateToolbarBadge().catch((err) => console.error("[MailAudit] İlk rozet hatası:", err));
+    ensureSpace().catch((err) => console.error("[MailLedger] Space install error:", err));
+    updateToolbarBadge().catch((err) => console.error("[MailLedger] Initial badge error:", err));
   });
 
   api.runtime.onStartup.addListener(() => {
-    ensureSpace().catch((err) => console.error("[MailAudit] Başlangıç alanı hatası:", err));
-    updateToolbarBadge().catch((err) => console.error("[MailAudit] Başlangıç rozet hatası:", err));
+    ensureSpace().catch((err) => console.error("[MailLedger] Startup space error:", err));
+    updateToolbarBadge().catch((err) => console.error("[MailLedger] Startup badge error:", err));
   });
 
-  ensureSpace().catch((err) => console.error("[MailAudit] Alan oluşturma hatası:", err));
-  updateToolbarBadge().catch((err) => console.error("[MailAudit] Rozet güncelleme hatası:", err));
+  ensureSpace().catch((err) => console.error("[MailLedger] Space init error:", err));
+  updateToolbarBadge().catch((err) => console.error("[MailLedger] Badge init error:", err));
 
   const exported = {
     SPACE_NAME,
